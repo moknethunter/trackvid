@@ -4,41 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#000000">
-<title>MokTrak Pro</title>
+<title>Trackvid</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:#000;font-family:system-ui,sans-serif}
 #wrap{position:relative;overflow:hidden}
-#videoWrap{position:absolute;inset:0;transform-origin:center center;transition:transform .15s ease-out}
+#videoWrap{position:absolute;inset:0;transform-origin:center center;will-change:transform}
 #video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #overlay{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
-#hud,#fps{position:absolute;z-index:5;color:#00ff88;background:#0009;border:1px solid #00ff8844;border-radius:14px;font:600 11px monospace;padding:6px 9px;text-shadow:0 1px 3px #000}
-#hud{top:10px;right:10px;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hud,#fps{position:absolute;z-index:5;color:#00ff88;background:rgba(0,0,0,0.4);border:1px solid #00ff8844;border-radius:14px;font:600 11px monospace;padding:6px 9px;text-shadow:0 1px 3px #000;backdrop-filter:blur(6px)}
+#hud{top:10px;right:10px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #fps{top:10px;left:10px}
-#hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:#000c;border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6}
-#panel{position:absolute;z-index:5;right:8px;top:50%;transform:translateY(-50%);display:none;pointer-events:none;min-width:130px;max-width:158px;background:#0009;backdrop-filter:blur(4px);border:1px solid #00ff8855;border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 3px #000}
-#panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid #00ff8844;padding-bottom:4px;margin-bottom:4px;font-size:12px}
+#hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:rgba(0,0,0,0.6);border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6;backdrop-filter:blur(8px)}
+#panel{position:absolute;z-index:5;right:8px;top:44%;transform:translateY(-50%);display:none;pointer-events:none;min-width:152px;max-width:178px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,0.35);border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
+#panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid rgba(0,255,136,0.3);padding-bottom:4px;margin-bottom:4px;font-size:12px}
 .row{display:flex;justify-content:space-between;gap:8px}
-.k{color:#00ff8899}.v{color:#fff;font-weight:700}
+.k{color:rgba(0,255,136,0.7)}.v{color:#fff;font-weight:700}
 .good{color:#00ff88}.warn{color:#ffca28}.bad{color:#ff5252}
 button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #startBtn{position:absolute;z-index:8;bottom:28px;left:50%;transform:translateX(-50%);border-radius:28px;background:#00ff88;color:#00180d;padding:15px 26px;font-size:16px;box-shadow:0 5px 24px #00ff8844;white-space:nowrap}
 #startBtn:disabled{opacity:.7}
-/* أزرار سفلية */
 #bottomBar{position:absolute;z-index:7;bottom:14px;right:10px;display:none;gap:8px;flex-direction:row}
-.ctrlBtn{width:52px;height:52px;border-radius:26px;background:#001a10dd;border:1.5px solid #00ff8866;color:#00ff88;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:all .15s}
+.ctrlBtn{width:52px;height:52px;border-radius:26px;background:rgba(0,26,16,0.7);border:1.5px solid #00ff8866;color:#00ff88;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
 .ctrlBtn:active{transform:scale(.92)}
 .ctrlBtn.rec{background:#ff1744;border-color:#ff1744;color:#fff}
 .ctrlBtn.rec.on{animation:pulse 1s infinite}
+.ctrlBtn.zoom{background:rgba(0,30,20,0.85);font-size:22px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #ff174488}50%{box-shadow:0 0 0 12px #ff174400}}
-/* أزرار التكبير */
-#zoomBar{position:absolute;z-index:7;right:10px;top:50%;transform:translateY(-50%);display:none;flex-direction:column;gap:6px;align-items:center}
-.zoomBtn{width:44px;height:44px;border-radius:22px;background:#001a10dd;border:1.5px solid #00ff8866;color:#00ff88;font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
-.zoomBtn:active{transform:scale(.9)}
-#zoomLevel{background:#000a;border:1px solid #00ff8855;border-radius:12px;color:#00ff88;font:700 11px monospace;padding:5px 8px;min-width:44px;text-align:center}
-/* شريط ESP */
-#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:#0009;border:1px solid #00ff8844;border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(4px)}
-#espBar input{background:#001a10;border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
+#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,136,0.35);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(8px)}
+#espBar input{background:rgba(0,26,16,0.8);border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
 #espBar input:focus{border-color:#00ff88}
 #espBtn{background:#00ff88;color:#00180d;border-radius:8px;padding:5px 10px;font:700 10px system-ui}
 #espBtn.off{background:#444;color:#aaa}
@@ -46,14 +40,17 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #espDot.on{background:#00ff88;box-shadow:0 0 8px #00ff88}
 #espDot.off{background:#ff5252}
 #espDot.mid{background:#ffca28}
-/* شريط الحالة */
-#statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:#000a;color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid #00ff8833;display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* رسالة الخطأ */
-#err{display:none;position:absolute;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:440px;background:#180000f2;border:1px solid #ff5252;border-radius:12px;padding:16px;color:#ff7777;font-size:13px;line-height:1.6;white-space:pre-wrap}
-/* مؤشر التسجيل */
+#statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid rgba(0,255,136,0.3);display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}
+#logBox{position:absolute;z-index:5;bottom:80px;left:10px;right:120px;max-height:130px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
+.logLine{background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,0.9);backdrop-filter:blur(6px);animation:fadeIn .3s}
+.logLine.err{border-color:#ff5252;color:#ff7777}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#err{display:none;position:absolute;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:440px;background:rgba(24,0,0,0.95);border:1px solid #ff5252;border-radius:12px;padding:16px;color:#ff7777;font-size:13px;line-height:1.6;white-space:pre-wrap}
 #recIndicator{position:absolute;z-index:9;top:10px;left:50%;transform:translateX(-50%);background:#ff1744;color:#fff;font:700 11px monospace;padding:6px 12px;border-radius:14px;display:none;align-items:center;gap:6px}
 #recIndicator::before{content:'';width:8px;height:8px;border-radius:4px;background:#fff;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+#zoomBadge{position:absolute;z-index:6;bottom:16px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:700 12px monospace;padding:6px 10px;border-radius:12px;border:1px solid rgba(0,255,136,0.3);display:none;backdrop-filter:blur(6px)}
+#sensorBadge{position:absolute;z-index:6;bottom:56px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:600 10px monospace;padding:4px 8px;border-radius:10px;border:1px solid rgba(0,255,136,0.25);display:none;backdrop-filter:blur(6px)}
 </style>
 </head>
 <body>
@@ -63,30 +60,27 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
     <canvas id="overlay"></canvas>
   </div>
 
-  <div id="hud">MokTrak · جاهز</div>
+  <div id="hud">Trackvid · جاهز</div>
   <div id="fps">-- fps</div>
+  <div id="zoomBadge">1.0×</div>
+  <div id="sensorBadge">📡 غير مفعّل</div>
   <div id="statusBar"></div>
   <div id="recIndicator">● تسجيل <span id="recTime">00:00</span></div>
-  <div id="hint">👆 انقر مرتين على أي كائن لتتبعه</div>
+  <div id="hint">👆 نقرة مزدوجة للقفل · إصبعان للتكبير</div>
   <div id="panel"></div>
+  <div id="logBox"></div>
 
-  <!-- أزرار التكبير -->
-  <div id="zoomBar">
-    <button class="zoomBtn" id="zoomIn">+</button>
-    <div id="zoomLevel">1.0×</div>
-    <button class="zoomBtn" id="zoomOut">−</button>
-  </div>
-
-  <!-- شريط ESP -->
   <div id="espBar">
     <span id="espDot"></span>
     <input id="espIP" type="text" placeholder="192.168.1.50" inputmode="numeric">
     <button id="espBtn" class="off">ربط</button>
   </div>
 
-  <!-- أزرار سفلية -->
   <div id="bottomBar">
-    <button class="ctrlBtn" id="resetBtn" title="إلغاء">✕</button>
+    <button class="ctrlBtn zoom" id="zoomOutBtn" title="تصغير">−</button>
+    <button class="ctrlBtn zoom" id="zoomInBtn" title="تكبير">+</button>
+    <button class="ctrlBtn" id="recenterBtn" title="إعادة ضبط">⌖</button>
+    <button class="ctrlBtn" id="resetBtn" title="إلغاء القفل">✕</button>
     <button class="ctrlBtn rec" id="recordBtn" title="تسجيل">●</button>
     <button class="ctrlBtn" id="switchBtn" title="تبديل">⟳</button>
   </div>
@@ -103,37 +97,47 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 //  الإعدادات
 // ═══════════════════════════════════════════════
 const CFG = {
-  // التتبع
   patchSize: 22,
   initRegion: 30,
+  // بحث عادي
   searchRadius: 22,
   coarseStep: 3,
   fineRadius: 3,
-  scales: [0.6, 0.75, 0.9, 1.0, 1.15, 1.35, 1.6, 1.9],
-  minScale: 0.5,
-  maxScale: 2.2,
+  // بحث موسّع عند الفقدان (للأشياء البعيدة)
+  searchRadiusLost: 70,
+  coarseStepLost: 7,
+  // نطاق أوسع للمقاييس (يسمح بتتبع الأشياء الصغيرة جدًا)
+  scales: [0.35, 0.5, 0.65, 0.8, 0.92, 1.0, 1.1, 1.25, 1.45, 1.7, 2.0, 2.4],
+  minScale: 0.3,
+  maxScale: 3.0,
+  // SAD
   minSAD: 3200,
   bestSAD: 900,
+  // التنعيم
   posSmoothing: 0.55,
   sizeSmoothing: 0.85,
+  // الأداء
   grayMaxDim: 480,
   frameIntervalMs: 25,
   templateUpdateEvery: 8,
   lostFramesToWarn: 20,
-  lostFramesToUnlock: 90,
-  // النقر
+  // النقر المزدوج
   doubleTapMs: 350,
   doubleTapRadiusPx: 90,
   tapMoveThreshold: 22,
   tapMaxDuration: 400,
   // ESP
   espInterval: 100,
-  // التكبير
+  // الزوم
   zoomMin: 1.0,
-  zoomMax: 4.0,
-  zoomStep: 0.25,
+  zoomMax: 8.0,
   // التسجيل
-  recMaxDim: 720
+  recMaxDim: 720,
+  // المستشعرات
+  sensorWeight: 0.35,   // 0 = لا تأثير، 1 = المستشعر يهيمن على التنبؤ
+  gyroScale: 6.0,       // معامل تحويل سرعة الدوران إلى إزاحة بكسل
+  logMaxLines: 5,
+  hideGraceMs: 800
 };
 
 // ═══════════════════════════════════════════════
@@ -146,8 +150,9 @@ const hud = $('hud'), fpsEl = $('fps'), panel = $('panel');
 const startBtn = $('startBtn'), resetBtn = $('resetBtn'), switchBtn = $('switchBtn');
 const recordBtn = $('recordBtn'), hint = $('hint'), err = $('err');
 const statusBar = $('statusBar'), recIndicator = $('recIndicator'), recTime = $('recTime');
-const zoomInBtn = $('zoomIn'), zoomOutBtn = $('zoomOut'), zoomLevel = $('zoomLevel');
-const zoomBar = $('zoomBar'), bottomBar = $('bottomBar');
+const bottomBar = $('bottomBar'), logBox = $('logBox'), zoomBadge = $('zoomBadge');
+const sensorBadge = $('sensorBadge');
+const zoomInBtn = $('zoomInBtn'), zoomOutBtn = $('zoomOutBtn'), recenterBtn = $('recenterBtn');
 
 function setStatus(msg, duration) {
   statusBar.textContent = msg;
@@ -157,6 +162,18 @@ function setStatus(msg, duration) {
 }
 function showError(m) { err.style.display = 'block'; err.textContent = m; }
 function hideError() { err.style.display = 'none'; }
+function addLog(text, isError) {
+  if (!logBox) return;
+  const line = document.createElement('div');
+  line.className = 'logLine' + (isError ? ' err' : '');
+  const t = new Date();
+  const hh = String(t.getHours()).padStart(2, '0');
+  const mm = String(t.getMinutes()).padStart(2, '0');
+  const ss = String(t.getSeconds()).padStart(2, '0');
+  line.textContent = `[${hh}:${mm}:${ss}] ${text}`;
+  logBox.appendChild(line);
+  while (logBox.children.length > CFG.logMaxLines) logBox.removeChild(logBox.firstChild);
+}
 
 // ═══════════════════════════════════════════════
 //  الحالة
@@ -164,40 +181,103 @@ function hideError() { err.style.display = 'none'; }
 let stream = null, running = false, facing = 'environment';
 let lastFrame = 0, fpsN = 0, fpsT = performance.now(), fps = 0;
 let rafId = 0, frameCount = 0;
-
 let tracked = null;
-// {template, cx, cy, scale, initRegionSize, lastSeen, velocity, sad, live, lostCount}
-
-let lastTap = null;
-let pointerStart = null;
+let lastTap = null, pointerStart = null;
 let zoom = 1.0;
-let recording = false, recorder = null, recStream = null, recChunks = [], recStartTime = 0, recTimer = 0;
+let recording = false, recorder = null, recChunks = [], recStartTime = 0, recTimer = 0;
+let hideTimer = null;
 
 const grayCanvas = document.createElement('canvas');
 const grayCtx = grayCanvas.getContext('2d', {willReadFrequently: true});
 let grayData = null, grayW = 480, grayH = 360;
 const scratchRegion = new Uint8Array(CFG.patchSize * CFG.patchSize);
 
-// Canvas التسجيل
 const recCanvas = document.createElement('canvas');
 const recCtx = recCanvas.getContext('2d');
+
+// ═══════════════════════════════════════════════
+//  المستشعرات (Gyroscope + Accelerometer)
+// ═══════════════════════════════════════════════
+const sensors = {
+  supported: false,
+  // سرعة الدوران (deg/s)
+  rotAlpha: 0, rotBeta: 0, rotGamma: 0,
+  // تسارع خطي
+  accX: 0, accY: 0, accZ: 0,
+  // وقت آخر تحديث
+  lastUpdate: 0,
+  // تنعيم
+  smoothAlpha: 0.7
+};
+
+function initSensors() {
+  if (!window.DeviceMotionEvent && !window.DeviceOrientationEvent) {
+    sensorBadge.textContent = '📡 لا يدعم';
+    return;
+  }
+
+  // DeviceMotion: يوفر التسارع وسرعة الدوران
+  if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', (e) => {
+      const a = e.acceleration || e.accelerationIncludingGravity;
+      const r = e.rotationRate;
+      if (r) {
+        sensors.rotAlpha = (r.alpha || 0);
+        sensors.rotBeta  = (r.beta  || 0);
+        sensors.rotGamma = (r.gamma || 0);
+      }
+      if (a) {
+        sensors.accX = (a.x || 0);
+        sensors.accY = (a.y || 0);
+        sensors.accZ = (a.z || 0);
+      }
+      sensors.lastUpdate = performance.now();
+      sensors.supported = true;
+    }, true);
+  }
+
+  // DeviceOrientation: يوفر الاتجاه المطلق
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', (e) => {
+      sensors.supported = true;
+      sensors.lastUpdate = performance.now();
+    }, true);
+  }
+
+  // رسالة أولية
+  sensorBadge.style.display = 'block';
+  setTimeout(() => {
+    if (sensors.supported) {
+      sensorBadge.textContent = '📡 المستشعرات نشطة';
+      addLog('📡 المستشعرات متاحة');
+    } else {
+      sensorBadge.textContent = '📡 المستشعرات معطلة';
+      addLog('⚠ لا توجد مستشعرات', true);
+    }
+  }, 2000);
+}
 
 // ═══════════════════════════════════════════════
 //  ESP8266
 // ═══════════════════════════════════════════════
 const espSender = {
-  ip: localStorage.getItem('moktrak_esp_ip') || '',
-  enabled: false, lastSend: 0, ok: false, fails: 0, timer: null,
+  ip: localStorage.getItem('trackvid_esp_ip') || '',
+  enabled: false, lastSend: 0, ok: false, fails: 0, timer: null, sentCount: 0,
   setIP(v) {
     this.ip = (v || '').trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-    if (this.ip) localStorage.setItem('moktrak_esp_ip', this.ip);
-    else localStorage.removeItem('moktrak_esp_ip');
+    if (this.ip) localStorage.setItem('trackvid_esp_ip', this.ip);
+    else localStorage.removeItem('trackvid_esp_ip');
   },
   ping() {
     if (!this.ip) return;
     const self = this;
     const img = new Image();
-    img.onload = img.onerror = () => { self.ok = true; self.fails = 0; updateEspUI(); };
+    img.onload = img.onerror = () => {
+      const wasOk = self.ok;
+      self.ok = true; self.fails = 0;
+      if (!wasOk) addLog('✅ ESP متصل: ' + self.ip);
+      updateEspUI();
+    };
     img.src = `http://${this.ip}/status?_=${Date.now()}`;
     setTimeout(() => { if (self.fails > 0) { self.ok = false; updateEspUI(); } }, 1000);
   },
@@ -206,11 +286,10 @@ const espSender = {
     const now = performance.now();
     if (now - this.lastSend < CFG.espInterval) return;
     this.lastSend = now;
-    if (!tracked || !tracked.live) { this._fire(`http://${this.ip}/t?live=0`); return; }
+    if (!tracked) { this._fire(`http://${this.ip}/t?live=0`); return; }
     const vScaleX = (video.videoWidth || 640) / grayW;
     const vScaleY = (video.videoHeight || 480) / grayH;
-    const vcx = tracked.cx * vScaleX;
-    const vcy = tracked.cy * vScaleY;
+    const vcx = tracked.cx * vScaleX, vcy = tracked.cy * vScaleY;
     const vw = CFG.patchSize * tracked.scale * vScaleX;
     const vh = CFG.patchSize * tracked.scale * vScaleY;
     const x = Math.round(vcx - (video.videoWidth / 2));
@@ -219,12 +298,22 @@ const espSender = {
     const vx = Math.round(tracked.velocity[0] * vScaleX);
     const vy = Math.round(tracked.velocity[1] * vScaleY);
     const sp = Math.round(Math.hypot(vx, vy));
-    this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=1`);
+    const liveFlag = tracked.live ? 1 : 0;
+    // إرسال بيانات المستشعرات أيضًا
+    const gx = Math.round(sensors.rotGamma || 0);
+    const gy = Math.round(sensors.rotBeta || 0);
+    const gz = Math.round(sensors.rotAlpha || 0);
+    this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=${liveFlag}&gx=${gx}&gy=${gy}&gz=${gz}`);
+    this.sentCount++;
+    if (this.sentCount <= 3 || this.sentCount % 20 === 0) {
+      addLog(`📡 x=${x} y=${y} w=${w} h=${h}`);
+    }
   },
   stop() {
     if (!this.ip) return;
     const img = new Image();
     img.src = `http://${this.ip}/t?live=0&_=${Date.now()}`;
+    addLog('⏹ إبلاغ ESP بالتوقف');
   },
   _fire(url) {
     const self = this;
@@ -234,11 +323,14 @@ const espSender = {
     clearTimeout(self.timer);
     self.timer = setTimeout(() => {
       self.fails++;
-      if (self.fails >= 3) { self.ok = false; updateEspUI(); }
+      if (self.fails >= 3 && self.ok) {
+        self.ok = false;
+        addLog('⚠ فُقد الاتصال بـ ESP', true);
+        updateEspUI();
+      }
     }, 400);
   }
 };
-
 function updateEspUI() {
   const dot = $('espDot'), btn = $('espBtn');
   if (!dot) return;
@@ -247,16 +339,23 @@ function updateEspUI() {
   btn.classList.toggle('off', !espSender.enabled);
   btn.textContent = espSender.enabled ? 'قطع' : 'ربط';
 }
-
 $('espBtn').addEventListener('click', e => {
   e.stopPropagation();
   const ip = $('espIP');
-  if (espSender.enabled) { espSender.enabled = false; espSender.ok = false; updateEspUI(); return; }
+  if (espSender.enabled) {
+    espSender.enabled = false; espSender.ok = false;
+    addLog('⏹ قطع الاتصال');
+    espSender.stop();
+    updateEspUI();
+    return;
+  }
   const v = ip.value.trim();
   if (!v) { ip.focus(); return; }
   espSender.setIP(v);
-  espSender.enabled = true; espSender.fails = 0;
-  espSender.ping(); updateEspUI();
+  espSender.enabled = true; espSender.fails = 0; espSender.sentCount = 0;
+  addLog('🔗 محاولة الاتصال بـ ' + v);
+  espSender.ping();
+  updateEspUI();
 });
 $('espIP').addEventListener('keypress', e => { if (e.key === 'Enter') $('espBtn').click(); });
 if (espSender.ip) $('espIP').value = espSender.ip;
@@ -281,34 +380,25 @@ function fit() {
   const r = wrap.getBoundingClientRect();
   const vw = video.videoWidth || 640, vh = video.videoHeight || 480;
   const scale = Math.max(r.width / vw, r.height / vh);
-  return {
-    scale,
-    ox: (r.width - vw * scale) / 2,
-    oy: (r.height - vh * scale) / 2,
-    vw, vh, w: r.width, h: r.height
-  };
+  return { scale, ox: (r.width - vw * scale) / 2, oy: (r.height - vh * scale) / 2, vw, vh, w: r.width, h: r.height };
 }
-
-// شاشة → إحداثيات محلية (قبل التحويل zoom)
 function screenToLocal(clientX, clientY) {
-  const r = canvas.getBoundingClientRect();
-  const w = r.width, h = r.height;
-  const lx = w/2 + (clientX - r.left - w/2) / zoom;
-  const ly = h/2 + (clientY - r.top  - h/2) / zoom;
+  const r = wrap.getBoundingClientRect();
+  const W = r.width, H = r.height;
+  const lx = W/2 + (clientX - r.left - W/2) / zoom;
+  const ly = H/2 + (clientY - r.top  - H/2) / zoom;
   return [lx, ly];
 }
-
-// محلية → إحداثيات الفيديو
 function localToVideo(lx, ly) {
   const f = fit();
   return [(lx - f.ox) / f.scale, (ly - f.oy) / f.scale];
 }
-
+function videoToLocal(vx, vy) {
+  const f = fit();
+  return [f.ox + vx * f.scale, f.oy + vy * f.scale];
+}
 function videoToGray(x, y) {
   return [x * grayW / (video.videoWidth || 640), y * grayH / (video.videoHeight || 480)];
-}
-function grayToVideo(x, y) {
-  return [x * (video.videoWidth || 640) / grayW, y * (video.videoHeight || 480) / grayH];
 }
 
 // ═══════════════════════════════════════════════
@@ -316,9 +406,8 @@ function grayToVideo(x, y) {
 // ═══════════════════════════════════════════════
 function initGrayCanvas() {
   const vw = video.videoWidth || 640, vh = video.videoHeight || 480;
-  const maxDim = CFG.grayMaxDim;
-  if (vw >= vh) { grayW = maxDim; grayH = Math.round(maxDim * vh / vw); }
-  else { grayH = maxDim; grayW = Math.round(maxDim * vw / vh); }
+  if (vw >= vh) { grayW = CFG.grayMaxDim; grayH = Math.round(CFG.grayMaxDim * vh / vw); }
+  else { grayH = CFG.grayMaxDim; grayW = Math.round(CFG.grayMaxDim * vw / vh); }
   grayCanvas.width = grayW; grayCanvas.height = grayH;
   grayData = null;
 }
@@ -331,10 +420,6 @@ function grabGray() {
   grayData.set(img.data);
   return grayData;
 }
-
-// ═══════════════════════════════════════════════
-//  استخراج رقعة + SAD
-// ═══════════════════════════════════════════════
 function extractRegion(gray, cx, cy, regionSize, out) {
   const P = CFG.patchSize;
   const half = regionSize * 0.5;
@@ -364,7 +449,7 @@ function sad(a, b) {
 }
 
 // ═══════════════════════════════════════════════
-//  قفل / إلغاء
+//  القفل
 // ═══════════════════════════════════════════════
 function lockAt(clientX, clientY) {
   const [lx, ly] = screenToLocal(clientX, clientY);
@@ -372,10 +457,8 @@ function lockAt(clientX, clientY) {
   const [gx, gy] = videoToGray(vx, vy);
   const gray = grabGray();
   if (!gray) return;
-
   const temp = new Uint8Array(CFG.patchSize * CFG.patchSize);
   extractRegion(gray, gx, gy, CFG.initRegion, temp);
-
   tracked = {
     template: temp.slice(),
     cx: gx, cy: gy,
@@ -383,55 +466,80 @@ function lockAt(clientX, clientY) {
     initRegionSize: CFG.initRegion,
     lastSeen: performance.now(),
     velocity: [0, 0],
-    sad: 0,
-    live: true,
-    lostCount: 0
+    sad: 0, live: true, lostCount: 0,
+    // التنبؤ بالمستشعرات
+    gyroVel: [0, 0],
+    lastGyroTime: performance.now()
   };
-
   hint.style.display = 'none';
   resetBtn.style.display = 'flex';
+  recenterBtn.style.display = 'flex';
   panel.style.display = 'block';
+  logBox.style.display = 'flex';
   hud.textContent = '🎯 مقفل';
-  setStatus('✅ تم القفل — التتبع نشط', 2000);
+  setStatus('✅ تم القفل', 1500);
+  addLog('🎯 قفل على كائن');
 }
-
 function unlock() {
   if (!tracked) return;
   tracked = null;
   resetBtn.style.display = 'none';
+  recenterBtn.style.display = 'none';
   panel.style.display = 'none';
-  hud.textContent = 'MokTrak · جاهز';
+  hud.textContent = 'Trackvid · جاهز';
   setStatus('إلغاء القفل', 1200);
+  addLog('✕ إلغاء القفل');
   espSender.stop();
 }
 
 // ═══════════════════════════════════════════════
-//  التتبع
+//  التتبع مع دمج المستشعرات
 // ═══════════════════════════════════════════════
 function trackStep(now) {
   if (!tracked) return;
   const gray = grabGray();
   if (!gray) return;
-
   const P = CFG.patchSize;
   const template = tracked.template;
-  const baseX = tracked.cx, baseY = tracked.cy, baseScale = tracked.scale;
+
+  // ═══ دمج المستشعرات: تنبؤ بالإزاحة الناتجة عن حركة الجهاز ═══
+  let sensorPredX = 0, sensorPredY = 0;
+  const dtGyro = (now - tracked.lastGyroTime) / 1000;
+  tracked.lastGyroTime = now;
+
+  if (sensors.supported && dtGyro < 0.5) {
+    // إزاحة البكسل على الشاشة بسبب دوران الجهاز
+    // gamma = دوران حول Z (yaw) → حركة أفقية
+    // beta = دوران حول X (pitch) → حركة عمودية
+    sensorPredX = -sensors.rotGamma * CFG.gyroScale * dtGyro;
+    sensorPredY = -sensors.rotBeta  * CFG.gyroScale * dtGyro;
+    // حد أقصى
+    const maxPred = 30;
+    sensorPredX = Math.max(-maxPred, Math.min(maxPred, sensorPredX));
+    sensorPredY = Math.max(-maxPred, Math.min(maxPred, sensorPredY));
+  }
+
+  // ═══ مركز البحث مع تنبؤ المستشعرات + تنبؤ السرعة ═══
+  const predictX = tracked.cx + tracked.velocity[0] + sensorPredX * CFG.sensorWeight;
+  const predictY = tracked.cy + tracked.velocity[1] + sensorPredY * CFG.sensorWeight;
+  const baseScale = tracked.scale;
   const regionBase = P * baseScale;
 
-  let best = { sad: Infinity, x: baseX, y: baseY, scale: baseScale };
+  let best = { sad: Infinity, x: predictX, y: predictY, scale: baseScale };
+  const lost = tracked.lostCount > CFG.lostFramesToWarn;
+  const R = lost ? CFG.searchRadiusLost : CFG.searchRadius;
+  const step = lost ? CFG.coarseStepLost : CFG.coarseStep;
 
-  // 1) بحث خشن
-  const R = CFG.searchRadius, step = CFG.coarseStep;
+  // بحث خشن حول المركز المتوقع
   for (let dy = -R; dy <= R; dy += step) {
     for (let dx = -R; dx <= R; dx += step) {
-      extractRegion(gray, baseX + dx, baseY + dy, regionBase, scratchRegion);
+      extractRegion(gray, predictX + dx, predictY + dy, regionBase, scratchRegion);
       const s = sad(template, scratchRegion);
-      if (s < best.sad) { best.sad = s; best.x = baseX + dx; best.y = baseY + dy; best.scale = baseScale; }
+      if (s < best.sad) { best.sad = s; best.x = predictX + dx; best.y = predictY + dy; best.scale = baseScale; }
     }
   }
-  // 2) بحث دقيق
-  const FR = CFG.fineRadius;
-  const cx0 = best.x, cy0 = best.y;
+  // بحث دقيق
+  const FR = CFG.fineRadius, cx0 = best.x, cy0 = best.y;
   for (let dy = -FR; dy <= FR; dy++) {
     for (let dx = -FR; dx <= FR; dx++) {
       if (dx === 0 && dy === 0) continue;
@@ -440,24 +548,21 @@ function trackStep(now) {
       if (s < best.sad) { best.sad = s; best.x = cx0 + dx; best.y = cy0 + dy; }
     }
   }
-  // 3) بحث بالمقاييس
+  // بحث بالمقاييس
   for (let i = 0; i < CFG.scales.length; i++) {
     const sc = CFG.scales[i];
     if (Math.abs(sc - baseScale) < 0.04) continue;
-    const regionSize = P * sc;
-    extractRegion(gray, best.x, best.y, regionSize, scratchRegion);
+    extractRegion(gray, best.x, best.y, P * sc, scratchRegion);
     const s = sad(template, scratchRegion);
     if (s < best.sad * 0.92) { best.sad = s; best.scale = sc; }
   }
 
-  // 4) القرار
   if (best.sad < CFG.minSAD) {
-    const alpha = CFG.posSmoothing;
-    const newX = tracked.cx * (1 - alpha) + best.x * alpha;
-    const newY = tracked.cy * (1 - alpha) + best.y * alpha;
-    const sAlpha = CFG.sizeSmoothing;
-    const newScale = tracked.scale * sAlpha + best.scale * (1 - sAlpha);
-
+    const a = CFG.posSmoothing;
+    const newX = tracked.cx * (1 - a) + best.x * a;
+    const newY = tracked.cy * (1 - a) + best.y * a;
+    const sA = CFG.sizeSmoothing;
+    const newScale = tracked.scale * sA + best.scale * (1 - sA);
     tracked.velocity = [
       tracked.velocity[0] * 0.55 + (newX - tracked.cx) * 0.45,
       tracked.velocity[1] * 0.55 + (newY - tracked.cy) * 0.45
@@ -468,7 +573,6 @@ function trackStep(now) {
     tracked.sad = best.sad;
     tracked.live = true;
     tracked.lostCount = 0;
-
     if (best.sad < CFG.bestSAD && frameCount % CFG.templateUpdateEvery === 0) {
       const region = new Uint8Array(P * P);
       extractRegion(gray, tracked.cx, tracked.cy, P * tracked.scale, region);
@@ -476,122 +580,183 @@ function trackStep(now) {
       for (let i = 0; i < tpl.length; i++) tpl[i] = (tpl[i] * 7 + region[i]) >> 3;
     }
   } else {
+    // فشل — نعتمد على السرعة + المستشعرات للتنبؤ
     tracked.lostCount++;
-    tracked.cx += tracked.velocity[0];
-    tracked.cy += tracked.velocity[1];
+    tracked.cx += tracked.velocity[0] + sensorPredX * CFG.sensorWeight;
+    tracked.cy += tracked.velocity[1] + sensorPredY * CFG.sensorWeight;
     tracked.velocity[0] *= 0.9;
     tracked.velocity[1] *= 0.9;
-    if (tracked.lostCount >= CFG.lostFramesToWarn) tracked.live = false;
-    if (tracked.lostCount >= CFG.lostFramesToUnlock) unlock();
+    if (tracked.lostCount >= CFG.lostFramesToWarn && tracked.live) {
+      tracked.live = false;
+      addLog('⚠ الهدف مفقود — البحث مستمر');
+    }
   }
 }
 
 // ═══════════════════════════════════════════════
-//  النقر المزدوج
+//  اللمس
 // ═══════════════════════════════════════════════
+const pointers = new Map();
+let pinchStartDist = 0, pinchStartZoom = 1, isPinching = false;
+
+function getTwoPointerDistance() {
+  const pts = Array.from(pointers.values());
+  if (pts.length < 2) return 0;
+  return Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+}
+
+function setZoom(z, fromPinch) {
+  const nz = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
+  if (Math.abs(nz - zoom) < 0.001) return;
+  zoom = nz;
+  if (fromPinch) videoWrap.style.transition = 'none';
+  else videoWrap.style.transition = 'transform .15s ease-out';
+  videoWrap.style.transform = `scale(${zoom})`;
+  zoomBadge.textContent = zoom.toFixed(2) + '×';
+  zoomBadge.style.display = 'block';
+  clearTimeout(setZoom._t);
+  setZoom._t = setTimeout(() => { zoomBadge.style.display = 'none'; }, 1200);
+}
+
 canvas.addEventListener('pointerdown', e => {
   if (!running) return;
-  pointerStart = { x: e.clientX, y: e.clientY, t: performance.now() };
-});
-
-canvas.addEventListener('pointerup', e => {
-  if (!running || !pointerStart) return;
-  const dx = e.clientX - pointerStart.x;
-  const dy = e.clientY - pointerStart.y;
-  const moved = Math.hypot(dx, dy);
-  const dt = performance.now() - pointerStart.t;
-  pointerStart = null;
-  if (moved > CFG.tapMoveThreshold || dt > CFG.tapMaxDuration) return;
-
-  const now = performance.now();
-  if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
-      Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
-    // نقرة مزدوجة
-    if (tracked) unlock();  // إن كان هناك هدف → إلغاء
-    lockAt(e.clientX, e.clientY); // ثم قفل جديد
+  try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+  pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (pointers.size === 2) {
+    isPinching = true;
+    pinchStartDist = getTwoPointerDistance();
+    pinchStartZoom = zoom;
+    pointerStart = null;
     lastTap = null;
-    return;
+  } else if (pointers.size === 1) {
+    pointerStart = { x: e.clientX, y: e.clientY, t: performance.now() };
   }
-  lastTap = { x: e.clientX, y: e.clientY, time: now };
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+  if (isPinching && pointers.size === 2 && pinchStartDist > 0) {
+    const d = getTwoPointerDistance();
+    const factor = d / pinchStartDist;
+    setZoom(pinchStartZoom * factor, true);
+  }
+});
+
+function endPointer(e) {
+  pointers.delete(e.pointerId);
+  try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+  if (pointers.size < 2) {
+    if (isPinching) videoWrap.style.transition = 'transform .15s ease-out';
+    isPinching = false;
+    pinchStartDist = 0;
+  }
+  if (pointers.size === 0 && !isPinching && pointerStart) {
+    const dx = e.clientX - pointerStart.x;
+    const dy = e.clientY - pointerStart.y;
+    const moved = Math.hypot(dx, dy);
+    const dt = performance.now() - pointerStart.t;
+    pointerStart = null;
+    if (moved > CFG.tapMoveThreshold || dt > CFG.tapMaxDuration) return;
+    const now = performance.now();
+    if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
+        Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
+      if (tracked) unlock();
+      lockAt(e.clientX, e.clientY);
+      lastTap = null;
+      return;
+    }
+    lastTap = { x: e.clientX, y: e.clientY, time: now };
+  } else if (pointers.size === 0) {
+    pointerStart = null;
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+
+zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom * 1.25, false); });
+zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom / 1.25, false); });
+recenterBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  setZoom(1.0, false);
+  addLog('⌖ إعادة ضبط الزوم');
 });
 
 // ═══════════════════════════════════════════════
-//  التكبير
-// ═══════════════════════════════════════════════
-function setZoom(z) {
-  zoom = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
-  videoWrap.style.transform = `scale(${zoom})`;
-  zoomLevel.textContent = zoom.toFixed(1) + '×';
-}
-zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom + CFG.zoomStep); });
-zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom - CFG.zoomStep); });
-zoomLevel.addEventListener('click', e => { e.stopPropagation(); setZoom(1.0); });
-
-// ═══════════════════════════════════════════════
-//  التسجيل
+//  التسجيل — يحفظ في المعرض عبر Android Bridge
 // ═══════════════════════════════════════════════
 function pickMime() {
   const types = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
   for (const t of types) if (MediaRecorder.isTypeSupported(t)) return t;
   return '';
 }
-
 function fmtTime(ms) {
   const s = Math.floor(ms / 1000);
-  const mm = String(Math.floor(s / 60)).padStart(2, '0');
-  const ss = String(s % 60).padStart(2, '0');
-  return mm + ':' + ss;
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0');
 }
-
 function startRecording() {
   if (recording || !running) return;
   const vw = video.videoWidth, vh = video.videoHeight;
   if (!vw || !vh) return;
-  // حجم التسجيل
   let CW = vw, CH = vh;
-  const maxDim = CFG.recMaxDim;
-  if (Math.max(CW, CH) > maxDim) {
-    const k = maxDim / Math.max(CW, CH);
+  if (Math.max(CW, CH) > CFG.recMaxDim) {
+    const k = CFG.recMaxDim / Math.max(CW, CH);
     CW = Math.round(CW * k); CH = Math.round(CH * k);
   }
   recCanvas.width = CW; recCanvas.height = CH;
-
-  // نبني تدفق من الكانفس
   const streamFromCanvas = recCanvas.captureStream(30);
   const mime = pickMime();
-
   try {
     recorder = new MediaRecorder(streamFromCanvas, mime ? { mimeType: mime, videoBitsPerSecond: 3000000 } : undefined);
-  } catch (e) {
-    showError('التسجيل غير مدعوم على هذا المتصفح: ' + e.message);
-    return;
-  }
+  } catch (e) { showError('التسجيل غير مدعوم: ' + e.message); return; }
   recChunks = [];
   recorder.ondataavailable = ev => { if (ev.data && ev.data.size > 0) recChunks.push(ev.data); };
   recorder.onstop = () => {
+    if (recChunks.length === 0) { addLog('⚠ لا توجد بيانات', true); return; }
     const blob = new Blob(recChunks, { type: mime || 'video/webm' });
+    const ext = (mime && mime.includes('mp4')) ? 'mp4' : 'webm';
+    const filename = `Trackvid_${Date.now()}.${ext}`;
+    const mimeType = mime || 'video/webm';
+
+    if (window.AndroidBridge && window.AndroidBridge.saveVideo) {
+      addLog('💾 حفظ الفيديو…');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        try {
+          const base64 = reader.result.split(',')[1];
+          const res = AndroidBridge.saveVideo(base64, filename, mimeType);
+          if (res && res.startsWith('OK')) {
+            addLog('✅ حُفظ في المعرض: ' + filename);
+            setStatus('✅ حُفظ في معرض الصور', 2500);
+          } else {
+            addLog('❌ فشل الحفظ: ' + res, true);
+          }
+        } catch (e) {
+          addLog('❌ ' + e.message, true);
+        }
+      };
+      reader.readAsDataURL(blob);
+      return;
+    }
+
+    // متصفح عادي
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const ext = (mime && mime.includes('mp4')) ? 'mp4' : 'webm';
-    a.href = url;
-    a.download = `MokTrak_${Date.now()}.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 5000);
-    setStatus('✅ تم حفظ التسجيل', 2500);
+    addLog('✅ حُفظ الفيديو');
+    setStatus('✅ حُفظ التسجيل', 2500);
   };
   recorder.start(1000);
   recording = true;
   recStartTime = performance.now();
   recordBtn.classList.add('on');
   recIndicator.style.display = 'flex';
-  recTimer = setInterval(() => {
-    recTime.textContent = fmtTime(performance.now() - recStartTime);
-  }, 500);
+  recTimer = setInterval(() => { recTime.textContent = fmtTime(performance.now() - recStartTime); }, 500);
+  addLog('⏺ بدأ التسجيل');
   setStatus('⏺ بدأ التسجيل', 1500);
 }
-
 function stopRecording() {
   if (!recording || !recorder) return;
   try { recorder.stop(); } catch (e) {}
@@ -600,52 +765,35 @@ function stopRecording() {
   recIndicator.style.display = 'none';
   clearInterval(recTimer);
   recorder = null;
+  addLog('⏹ إيقاف التسجيل');
 }
-
 recordBtn.addEventListener('click', e => {
   e.stopPropagation();
-  if (recording) stopRecording();
-  else startRecording();
+  if (recording) stopRecording(); else startRecording();
 });
 
-// يرسم الكائن على كانفس التسجيل
 function drawForRecording() {
   if (!recording || !recCanvas.width) return;
   const CW = recCanvas.width, CH = recCanvas.height;
   const VW = video.videoWidth, VH = video.videoHeight;
   const Z = zoom;
-
-  // المصدر (مع الزوم)
   const srcW = VW / Z, srcH = VH / Z;
   const srcX = (VW - srcW) / 2, srcY = (VH - srcH) / 2;
-
   recCtx.drawImage(video, srcX, srcY, srcW, srcH, 0, 0, CW, CH);
-
-  // رسم الصندوق والصليب
   if (tracked) {
-    // إحداثيات الكائن في الفيديو
     const vScaleX = VW / grayW, vScaleY = VH / grayH;
-    const ovx = tracked.cx * vScaleX;
-    const ovy = tracked.cy * vScaleY;
+    const ovx = tracked.cx * vScaleX, ovy = tracked.cy * vScaleY;
     const ovw = CFG.patchSize * tracked.scale * vScaleX;
     const ovh = CFG.patchSize * tracked.scale * vScaleY;
-
-    // موقع الكائن داخل التسجيل (بعد زوم crop)
     const kx = CW / srcW, ky = CH / srcH;
-    const bx = (ovx - ovw/2 - srcX) * kx;
-    const by = (ovy - ovh/2 - srcY) * ky;
-    const bw = ovw * kx;
-    const bh = ovh * ky;
-
+    const bx = (ovx - ovw/2 - srcX) * kx, by = (ovy - ovh/2 - srcY) * ky;
+    const bw = ovw * kx, bh = ovh * ky;
     if (tracked.live) {
       recCtx.strokeStyle = '#00ff88';
       recCtx.lineWidth = Math.max(2, Math.min(CW, CH) * 0.005);
-      recCtx.shadowColor = '#00ff88';
-      recCtx.shadowBlur = 8;
+      recCtx.shadowColor = '#00ff88'; recCtx.shadowBlur = 8;
       recCtx.strokeRect(bx, by, bw, bh);
       recCtx.shadowBlur = 0;
-
-      // صليب صغير
       const ccx = bx + bw/2, ccy = by + bh/2;
       const cs = Math.max(10, Math.min(bw, bh) * 0.2);
       recCtx.beginPath();
@@ -656,21 +804,19 @@ function drawForRecording() {
       recCtx.stroke();
     }
   }
-
-  // علامة المركز الأصفر
   recCtx.strokeStyle = 'rgba(255,235,59,.9)';
   recCtx.lineWidth = 2;
   const mcx = CW/2, mcy = CH/2;
   recCtx.beginPath();
-  recCtx.moveTo(mcx - 12, mcy); recCtx.lineTo(mcx - 4, mcy);
-  recCtx.moveTo(mcx + 4, mcy); recCtx.lineTo(mcx + 12, mcy);
-  recCtx.moveTo(mcx, mcy - 12); recCtx.lineTo(mcx, mcy - 4);
-  recCtx.moveTo(mcx, mcy + 4); recCtx.lineTo(mcx, mcy + 12);
+  recCtx.moveTo(mcx-12, mcy); recCtx.lineTo(mcx-4, mcy);
+  recCtx.moveTo(mcx+4, mcy); recCtx.lineTo(mcx+12, mcy);
+  recCtx.moveTo(mcx, mcy-12); recCtx.lineTo(mcx, mcy-4);
+  recCtx.moveTo(mcx, mcy+4); recCtx.lineTo(mcx, mcy+12);
   recCtx.stroke();
 }
 
 // ═══════════════════════════════════════════════
-//  الرسم على الشاشة
+//  الرسم
 // ═══════════════════════════════════════════════
 function drawCross(cx, cy, size, live) {
   ctx.save();
@@ -681,120 +827,94 @@ function drawCross(cx, cy, size, live) {
   ctx.lineWidth = 2;
   const g = size * .28, a = size;
   ctx.beginPath();
-  ctx.moveTo(cx - a, cy); ctx.lineTo(cx - g, cy);
-  ctx.moveTo(cx + g, cy); ctx.lineTo(cx + a, cy);
-  ctx.moveTo(cx, cy - a); ctx.lineTo(cx, cy - g);
-  ctx.moveTo(cx, cy + g); ctx.lineTo(cx, cy + a);
+  ctx.moveTo(cx-a, cy); ctx.lineTo(cx-g, cy);
+  ctx.moveTo(cx+g, cy); ctx.lineTo(cx+a, cy);
+  ctx.moveTo(cx, cy-a); ctx.lineTo(cx, cy-g);
+  ctx.moveTo(cx, cy+g); ctx.lineTo(cx, cy+a);
   ctx.stroke();
   ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(cx, cy, g * .9, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, g*.9, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill();
   ctx.lineWidth = 2;
   for (let k = 0; k < 4; k++) {
-    const ang = k * Math.PI / 2 + Math.PI / 4;
-    ctx.beginPath(); ctx.arc(cx, cy, a + 4, ang - .18, ang + .18); ctx.stroke();
+    const ang = k*Math.PI/2 + Math.PI/4;
+    ctx.beginPath(); ctx.arc(cx, cy, a+4, ang-.18, ang+.18); ctx.stroke();
   }
   ctx.restore();
 }
-
 function drawCenterMarker(cx, cy) {
   ctx.save();
   ctx.strokeStyle = 'rgba(255,235,59,.85)';
   ctx.fillStyle = 'rgba(255,235,59,.85)';
-  ctx.shadowColor = '#ffeb3b';
-  ctx.shadowBlur = 6;
+  ctx.shadowColor = '#ffeb3b'; ctx.shadowBlur = 6;
   ctx.lineWidth = 1.5;
   const s = 12, g = 4;
   ctx.beginPath();
-  ctx.moveTo(cx - s, cy); ctx.lineTo(cx - g, cy);
-  ctx.moveTo(cx + g, cy); ctx.lineTo(cx + s, cy);
-  ctx.moveTo(cx, cy - s); ctx.lineTo(cx, cy - g);
-  ctx.moveTo(cx, cy + g); ctx.lineTo(cx, cy + s);
+  ctx.moveTo(cx-s, cy); ctx.lineTo(cx-g, cy);
+  ctx.moveTo(cx+g, cy); ctx.lineTo(cx+s, cy);
+  ctx.moveTo(cx, cy-s); ctx.lineTo(cx, cy-g);
+  ctx.moveTo(cx, cy+g); ctx.lineTo(cx, cy+s);
   ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, cy, 1.5, 0, Math.PI*2); ctx.fill();
   ctx.restore();
 }
-
 function drawTracked() {
   const f = fit();
   const vScaleX = (video.videoWidth || 640) / grayW;
   const vScaleY = (video.videoHeight || 480) / grayH;
-
   if (tracked) {
     const regionPx = CFG.patchSize * tracked.scale;
-    const vx = tracked.cx * vScaleX;
-    const vy = tracked.cy * vScaleY;
-    const vw = regionPx * vScaleX;
-    const vh = regionPx * vScaleY;
-
-    // في إحداثيات الفيديو → محلية (بدون زوم، لأن الكانفس داخل videoWrap)
-    const tl_x = f.ox + (vx - vw / 2) * f.scale;
-    const tl_y = f.oy + (vy - vh / 2) * f.scale;
-    const bw = vw * f.scale;
-    const bh = vh * f.scale;
-    const objCx = tl_x + bw / 2, objCy = tl_y + bh / 2;
-
-    // مركز الشاشة (محلي)
-    const scx = f.w / 2, scy = f.h / 2;
-
-    // خط من المركز
+    const vx = tracked.cx * vScaleX, vy = tracked.cy * vScaleY;
+    const vw = regionPx * vScaleX, vh = regionPx * vScaleY;
+    const [bx, by] = videoToLocal(vx - vw/2, vy - vh/2);
+    const [bx2, by2] = videoToLocal(vx + vw/2, vy + vh/2);
+    const bw = bx2 - bx, bh = by2 - by;
+    const objCx = bx + bw/2, objCy = by + bh/2;
+    const scx = f.w/2, scy = f.h/2;
     ctx.save();
     ctx.strokeStyle = 'rgba(255,235,59,.4)';
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([5, 5]);
+    ctx.lineWidth = 1.2; ctx.setLineDash([5, 5]);
     ctx.beginPath(); ctx.moveTo(scx, scy); ctx.lineTo(objCx, objCy); ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
-
-    // مربع أخضر
     ctx.save();
     ctx.strokeStyle = tracked.live ? '#00ff88' : '#ffca28';
     ctx.lineWidth = 1.8;
     ctx.shadowColor = ctx.strokeStyle;
     ctx.shadowBlur = tracked.live ? 8 : 3;
-    ctx.strokeRect(tl_x, tl_y, bw, bh);
+    ctx.strokeRect(bx, by, bw, bh);
     ctx.shadowBlur = 0;
-    // زوايا
     const cl = Math.min(bw, bh) * 0.18;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.moveTo(tl_x, tl_y + cl); ctx.lineTo(tl_x, tl_y); ctx.lineTo(tl_x + cl, tl_y);
-    ctx.moveTo(tl_x + bw - cl, tl_y); ctx.lineTo(tl_x + bw, tl_y); ctx.lineTo(tl_x + bw, tl_y + cl);
-    ctx.moveTo(tl_x + bw, tl_y + bh - cl); ctx.lineTo(tl_x + bw, tl_y + bh); ctx.lineTo(tl_x + bw - cl, tl_y + bh);
-    ctx.moveTo(tl_x + cl, tl_y + bh); ctx.lineTo(tl_x, tl_y + bh); ctx.lineTo(tl_x, tl_y + bh - cl);
+    ctx.moveTo(bx, by+cl); ctx.lineTo(bx, by); ctx.lineTo(bx+cl, by);
+    ctx.moveTo(bx+bw-cl, by); ctx.lineTo(bx+bw, by); ctx.lineTo(bx+bw, by+cl);
+    ctx.moveTo(bx+bw, by+bh-cl); ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx+bw-cl, by+bh);
+    ctx.moveTo(bx+cl, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+bh-cl);
     ctx.stroke();
     ctx.restore();
-
-    // صليب على الكائن
     const crossSize = Math.max(12, Math.min(bw, bh) * 0.18);
     drawCross(objCx, objCy, crossSize, tracked.live);
   }
-
-  // علامة مركز الشاشة دائمًا
-  drawCenterMarker(f.w / 2, f.h / 2);
+  drawCenterMarker(f.w/2, f.h/2);
 }
-
 function drawPendingTap(now) {
   if (!lastTap) return;
   const age = now - lastTap.time;
   if (age > CFG.doubleTapMs) return;
   const r = canvas.getBoundingClientRect();
-  const x = lastTap.x - r.left;
-  const y = lastTap.y - r.top;
+  const x = (lastTap.x - r.left) / zoom;
+  const y = (lastTap.y - r.top) / zoom;
   const alpha = 1 - age / CFG.doubleTapMs;
   ctx.save();
   ctx.strokeStyle = `rgba(255,235,59,${alpha})`;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(x, y, 12 + (1 - alpha) * 12, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(x, y, 3, 0, Math.PI * 2);
+  ctx.lineWidth = 2 / zoom;
+  ctx.beginPath(); ctx.arc(x, y, (12 + (1-alpha)*12) / zoom, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x, y, 3 / zoom, 0, Math.PI*2);
   ctx.fillStyle = `rgba(255,235,59,${alpha})`;
   ctx.fill();
   ctx.restore();
 }
-
 function updatePanel(now) {
   if (!tracked) return;
   const vScaleX = (video.videoWidth || 640) / grayW;
@@ -804,27 +924,28 @@ function updatePanel(now) {
   const relY = vcy - (video.videoHeight / 2);
   const vw = CFG.patchSize * tracked.scale * vScaleX;
   const vh = CFG.patchSize * tracked.scale * vScaleY;
-  const speed = Math.hypot(tracked.velocity[0] * vScaleX, tracked.velocity[1] * vScaleY);
-  const zoomFactor = tracked.scale / (tracked.initRegionSize / CFG.patchSize);
+  const vvx = tracked.velocity[0] * vScaleX;
+  const vvy = tracked.velocity[1] * vScaleY;
+  const speed = Math.hypot(vvx, vvy);
   const age = now - tracked.lastSeen;
-
+  const dist = Math.hypot(vw, vh);
   let status = 'نشط', cls = 'good';
-  if (!tracked.live) { status = 'استعادة'; cls = 'warn'; }
-  if (age > 500) { status = 'مفقود'; cls = 'bad'; }
-
+  if (!tracked.live) { status = 'بحث'; cls = 'warn'; }
+  else if (age > 300) { status = 'استعادة'; cls = 'warn'; }
   panel.innerHTML =
     '<div class="title">🎯 الهدف</div>' +
-    '<div class="row"><span class="k">الحالة</span><span class="' + cls + '">' + status + '</span></div>' +
-    '<div class="row"><span class="k">X</span><span class="v">' + relX.toFixed(0) + '</span></div>' +
-    '<div class="row"><span class="k">Y</span><span class="v">' + relY.toFixed(0) + '</span></div>' +
-    '<div class="row"><span class="k">حجم</span><span class="v">' + vw.toFixed(0) + '×' + vh.toFixed(0) + '</span></div>' +
-    '<div class="row"><span class="k">زوم كائن</span><span class="v">' + zoomFactor.toFixed(2) + '×</span></div>' +
-    '<div class="row"><span class="k">سرعة</span><span class="v">' + speed.toFixed(0) + '</span></div>' +
-    '<div class="row"><span class="k">SAD</span><span class="v">' + tracked.sad.toFixed(0) + '</span></div>';
-
+    '<div class="row"><span class="k">الحالة</span><span class="'+cls+'">'+status+'</span></div>' +
+    '<div class="row"><span class="k">x</span><span class="v">'+relX.toFixed(0)+'</span></div>' +
+    '<div class="row"><span class="k">y</span><span class="v">'+relY.toFixed(0)+'</span></div>' +
+    '<div class="row"><span class="k">w×h</span><span class="v">'+vw.toFixed(0)+'×'+vh.toFixed(0)+'</span></div>' +
+    '<div class="row"><span class="k">حجم</span><span class="v">'+dist.toFixed(0)+' px</span></div>' +
+    '<div class="row"><span class="k">سرعة</span><span class="v">'+speed.toFixed(0)+'</span></div>' +
+    '<div class="row"><span class="k">زوم</span><span class="v">'+zoom.toFixed(2)+'×</span></div>' +
+    '<div class="row"><span class="k">SAD</span><span class="v">'+tracked.sad.toFixed(0)+'</span></div>' +
+    '<div class="row"><span class="k">📡 مستشعر</span><span class="v">'+(sensors.supported?'✅':'—')+'</span></div>' +
+    '<div class="row"><span class="k">ESP</span><span class="v">'+(espSender.ok?'✅':'⏸')+'</span></div>';
   espSender.send();
 }
-
 function render(now) {
   const r = wrap.getBoundingClientRect();
   ctx.clearRect(0, 0, r.width, r.height);
@@ -833,9 +954,6 @@ function render(now) {
   if (tracked) updatePanel(now);
 }
 
-// ═══════════════════════════════════════════════
-//  الحلقة
-// ═══════════════════════════════════════════════
 function loop() {
   if (!running) return;
   const now = performance.now();
@@ -855,9 +973,6 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
-// ═══════════════════════════════════════════════
-//  التشغيل
-// ═══════════════════════════════════════════════
 async function start() {
   startBtn.disabled = true;
   startBtn.textContent = 'جارٍ التشغيل…';
@@ -883,14 +998,17 @@ async function start() {
     await video.play();
     initGrayCanvas();
     resize();
+    initSensors();
     running = true;
     startBtn.style.display = 'none';
     bottomBar.style.display = 'flex';
-    zoomBar.style.display = 'flex';
     $('espBar').style.display = 'flex';
-    hud.textContent = 'MokTrak · جاهز';
+    logBox.style.display = 'flex';
+    hud.textContent = 'Trackvid · جاهز';
     hint.style.display = 'block';
     setTimeout(() => { if (!tracked) hint.style.display = 'none'; }, 6000);
+    addLog('▶ تشغيل الكاميرا');
+    addLog('🔒 يعمل بدون إنترنت');
     loop();
   } catch (e) {
     showError('تعذر التشغيل: ' + (e.message || e) + '\n\nتأكد من:\n• السماح بالكاميرا\n• فتح الرابط عبر HTTPS');
@@ -899,7 +1017,6 @@ async function start() {
     startBtn.textContent = '↻ إعادة المحاولة';
   }
 }
-
 async function switchCamera() {
   if (!running) return;
   facing = facing === 'environment' ? 'user' : 'environment';
@@ -921,29 +1038,67 @@ async function switchCamera() {
     initGrayCanvas();
     running = true;
     frameCount = 0;
+    addLog('🔄 تبديل الكاميرا');
     loop();
   } catch (e) {
     showError('تعذر تبديل الكاميرا: ' + e.message);
     running = false;
   }
 }
-
 startBtn.addEventListener('click', start);
 switchBtn.addEventListener('click', e => { e.stopPropagation(); switchCamera(); });
 resetBtn.addEventListener('click', e => { e.stopPropagation(); unlock(); });
 
-window.addEventListener('pagehide', () => {
-  running = false;
-  cancelAnimationFrame(rafId);
-  if (stream) stream.getTracks().forEach(t => t.stop());
-  if (recording) stopRecording();
-  espSender.stop();
-});
-
-// Service Worker (اختياري)
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+function stopAll() {
+  if (running) {
+    running = false;
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+  if (recording) { try { stopRecording(); } catch(e) {} }
+  if (stream) {
+    try { stream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} }); } catch(e) {}
+    stream = null;
+  }
+  if (video) {
+    try { video.pause(); } catch(e) {}
+    try { video.srcObject = null; } catch(e) {}
+    try { video.load(); } catch(e) {}
+  }
+  if (espSender.enabled && espSender.ip) {
+    try {
+      const img = new Image();
+      img.src = `http://${espSender.ip}/t?live=0&_=${Date.now()}`;
+    } catch(e) {}
+  }
+  if (startBtn) {
+    startBtn.disabled = false;
+    startBtn.textContent = '▶ تشغيل الكاميرا';
+    startBtn.style.display = 'block';
+  }
+  if (bottomBar) bottomBar.style.display = 'none';
+  if ($('espBar')) $('espBar').style.display = 'none';
+  if (logBox) logBox.style.display = 'none';
+  if (panel) panel.style.display = 'none';
+  tracked = null;
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      if (document.hidden && running) {
+        addLog('⏸ الصفحة مخفية — إيقاف');
+        stopAll();
+      }
+    }, CFG.hideGraceMs);
+  } else {
+    clearTimeout(hideTimer);
+  }
+});
+window.addEventListener('pagehide', () => stopAll());
+window.addEventListener('beforeunload', () => stopAll());
+window.addEventListener('unload', () => stopAll());
 })();
 </script>
 </body>
