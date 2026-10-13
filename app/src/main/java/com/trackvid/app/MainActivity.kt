@@ -11,10 +11,15 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.view.WindowManager
-import android.webkit.*
+import android.webkit.PermissionRequest
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,16 +32,12 @@ import java.io.FileOutputStream
 class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
-    private val PERM_REQ = 1001
 
-    private val requiredPerms = mutableListOf(
-        Manifest.permission.CAMERA,
-        Manifest.permission.RECORD_AUDIO
-    ).apply {
-        if (Build.VERSION.SDK_INT <= 28) {
-            add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-    }.toTypedArray()
+    private val permLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { _ ->
+        setupWebView()
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,21 +57,20 @@ class MainActivity : ComponentActivity() {
         }
         setContentView(webView)
 
-        val missing = requiredPerms.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        val missing = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            missing.add(Manifest.permission.CAMERA)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED) {
+            missing.add(Manifest.permission.RECORD_AUDIO)
         }
         if (missing.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, missing.toTypedArray(), PERM_REQ)
+            permLauncher.launch(missing.toTypedArray())
         } else {
             setupWebView()
         }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERM_REQ) setupWebView()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -115,8 +115,11 @@ class MainActivity : ComponentActivity() {
                             ) == PackageManager.PERMISSION_GRANTED
                         ) granted.add(r)
                     }
-                    if (granted.isNotEmpty()) request.grant(granted.toTypedArray())
-                    else request.deny()
+                    if (granted.isNotEmpty()) {
+                        request.grant(granted.toTypedArray())
+                    } else {
+                        request.deny()
+                    }
                 }
             }
         }
@@ -139,7 +142,7 @@ class MainActivity : ComponentActivity() {
     }
 
     inner class WebAppBridge {
-        @JavascriptInterface
+        @android.webkit.JavascriptInterface
         fun saveVideo(base64Data: String, fileName: String, mimeType: String): String {
             return try {
                 val bytes = Base64.decode(base64Data, Base64.DEFAULT)
@@ -150,7 +153,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        @JavascriptInterface
+        @android.webkit.JavascriptInterface
         fun toast(msg: String) {
             runOnUiThread {
                 Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
