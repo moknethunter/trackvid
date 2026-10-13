@@ -11,12 +11,15 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.view.WindowManager
+import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,13 +28,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.webkit.WebViewAssetLoader
-import androidx.webkit.WebViewClientCompat
 import java.io.File
 import java.io.FileOutputStream
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var webView: WebView
+    private var fallbackUsed = false
 
     private val permLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -86,18 +89,8 @@ class MainActivity : ComponentActivity() {
         settings.useWideViewPort = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-
-        val assetLoader = WebViewAssetLoader.Builder()
-            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
-            .build()
-
-        webView.webViewClient = object : WebViewClientCompat() {
-            override fun shouldInterceptRequest(
-                view: WebView, request: WebResourceRequest
-            ): WebResourceResponse? {
-                return assetLoader.shouldInterceptRequest(request.url)
-            }
-        }
+        settings.setSupportZoom(false)
+        settings.builtInZoomControls = false
 
         webView.webChromeClient = object : WebChromeClient() {
             override fun onPermissionRequest(request: PermissionRequest) {
@@ -125,24 +118,85 @@ class MainActivity : ComponentActivity() {
         }
 
         webView.addJavascriptInterface(WebAppBridge(), "AndroidBridge")
+
+        // محاولة عبر AssetLoader أولاً
+        val assetLoader = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(
+                view: WebView, request: WebResourceRequest
+            ): WebResourceResponse? {
+                return assetLoader.shouldInterceptRequest(request.url)
+            }
+
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: WebResourceError
+            ) {
+                super.onReceivedError(view, request, error)
+                if (request.isForMainFrame && !fallbackUsed) {
+                    fallbackUsed = true
+                    loadFromAssetDirect()
+                }
+            }
+
+            override fun onPageFinished(view: WebView, url: String) {
+                super.onPageFinished(view, url)
+                // إذا كانت الصفحة فارغة، استخدم الـ fallback
+                view.evaluateJavascript(
+                    "(function(){return document.body ? document.body.innerText.length : 0;})()"
+                ) { result ->
+                    val len = result?.toIntOrNull() ?: 0
+                    if (len < 10 && !fallbackUsed) {
+                        fallbackUsed = true
+                        loadFromAssetDirect()
+                    }
+                }
+            }
+        }
+
+        // جرّب التحميل عبر AssetLoader
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
+    }
+
+    private fun loadFromAssetDirect() {
+        try {
+            val html = assets.open("index.html").bufferedReader().use { it.readText() }
+            webView.loadDataWithBaseURL(
+                "https://appassets.androidplatform.net/",
+                html,
+                "text/html",
+                "UTF-8",
+                null
+            )
+            Toast.makeText(this, "استُخدم الوضع البديل", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "خطأ: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        webView.evaluateJavascript(
-            "window.dispatchEvent(new Event('pagehide'));", null
-        )
+        try {
+            webView.evaluateJavascript(
+                "window.dispatchEvent(new Event('pagehide'));", null
+            )
+        } catch (_: Exception) {}
     }
 
     override fun onDestroy() {
-        webView.loadUrl("about:blank")
-        webView.destroy()
+        try {
+            webView.loadUrl("about:blank")
+            webView.destroy()
+        } catch (_: Exception) {}
         super.onDestroy()
     }
 
     inner class WebAppBridge {
-        @android.webkit.JavascriptInterface
+        @JavascriptInterface
         fun saveVideo(base64Data: String, fileName: String, mimeType: String): String {
             return try {
                 val bytes = Base64.decode(base64Data, Base64.DEFAULT)
@@ -153,7 +207,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        @android.webkit.JavascriptInterface
+        @JavascriptInterface
         fun toast(msg: String) {
             runOnUiThread {
                 Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
