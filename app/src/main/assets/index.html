@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#000000">
-<title>MokTrak Pro</title>
+<title>Trackvid</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:#000;font-family:system-ui,sans-serif}
@@ -16,22 +16,27 @@ html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:
 #hud{top:10px;right:10px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #fps{top:10px;left:10px}
 #hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:rgba(0,0,0,0.6);border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6;backdrop-filter:blur(8px)}
-#panel{position:absolute;z-index:5;right:8px;top:44%;transform:translateY(-50%);display:none;pointer-events:none;min-width:148px;max-width:172px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,0.35);border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
+#panel{position:absolute;z-index:5;right:8px;top:38%;transform:translateY(-50%);display:none;pointer-events:none;min-width:172px;max-width:200px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,0.35);border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
+#panel.locked{border-color:rgba(255,60,60,0.55)}
 #panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid rgba(0,255,136,0.3);padding-bottom:4px;margin-bottom:4px;font-size:12px}
+#panel.locked .title{color:#ff5252;border-color:rgba(255,82,82,0.35)}
+#panel .sub{font-weight:700;color:#ffca28;font-size:10px;margin-top:6px;margin-bottom:2px;letter-spacing:.5px}
 .row{display:flex;justify-content:space-between;gap:8px}
 .k{color:rgba(0,255,136,0.7)}.v{color:#fff;font-weight:700}
 .good{color:#00ff88}.warn{color:#ffca28}.bad{color:#ff5252}
+.delta-pos{color:#ff5252 !important}
+.delta-neg{color:#00e5ff !important}
 button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #startBtn{position:absolute;z-index:8;bottom:28px;left:50%;transform:translateX(-50%);border-radius:28px;background:#00ff88;color:#00180d;padding:15px 26px;font-size:16px;box-shadow:0 5px 24px #00ff8844;white-space:nowrap}
 #startBtn:disabled{opacity:.7}
-#bottomBar{position:absolute;z-index:7;bottom:14px;right:10px;display:none;gap:8px;flex-direction:row}
-.ctrlBtn{width:52px;height:52px;border-radius:26px;background:rgba(0,26,16,0.7);border:1.5px solid #00ff8866;color:#00ff88;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
-.ctrlBtn:active{transform:scale(.92)}
+#bottomBar{position:absolute;z-index:7;bottom:14px;left:0;right:0;display:none;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 10px}
+.ctrlBtn{min-width:56px;height:52px;padding:0 16px;border-radius:26px;background:rgba(0,26,16,0.75);border:1.5px solid #00ff8866;color:#00ff88;font-size:16px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);gap:6px}
+.ctrlBtn:active{transform:scale(.94)}
+.ctrlBtn.select{background:#00ff88;color:#00180d;font-weight:800}
 .ctrlBtn.rec{background:#ff1744;border-color:#ff1744;color:#fff}
 .ctrlBtn.rec.on{animation:pulse 1s infinite}
-.ctrlBtn.zoom{background:rgba(0,30,20,0.85);font-size:22px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #ff174488}50%{box-shadow:0 0 0 12px #ff174400}}
-#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,136,0.35);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(8px)}
+#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,136,0.35);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(8px);flex-wrap:wrap;max-width:80%}
 #espBar input{background:rgba(0,26,16,0.8);border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
 #espBar input:focus{border-color:#00ff88}
 #espBtn{background:#00ff88;color:#00180d;border-radius:8px;padding:5px 10px;font:700 10px system-ui}
@@ -41,7 +46,7 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #espDot.off{background:#ff5252}
 #espDot.mid{background:#ffca28}
 #statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid rgba(0,255,136,0.3);display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}
-#logBox{position:absolute;z-index:5;bottom:80px;left:10px;right:120px;max-height:130px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
+#logBox{position:absolute;z-index:5;bottom:82px;left:10px;right:120px;max-height:130px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
 .logLine{background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,0.9);backdrop-filter:blur(6px);animation:fadeIn .3s}
 .logLine.err{border-color:#ff5252;color:#ff7777}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -50,6 +55,7 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #recIndicator::before{content:'';width:8px;height:8px;border-radius:4px;background:#fff;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 #zoomBadge{position:absolute;z-index:6;bottom:16px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:700 12px monospace;padding:6px 10px;border-radius:12px;border:1px solid rgba(0,255,136,0.3);display:none;backdrop-filter:blur(6px)}
+#sensorBadge{position:absolute;z-index:6;bottom:56px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:600 10px monospace;padding:4px 8px;border-radius:10px;border:1px solid rgba(0,255,136,0.25);display:none;backdrop-filter:blur(6px)}
 </style>
 </head>
 <body>
@@ -59,12 +65,13 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
     <canvas id="overlay"></canvas>
   </div>
 
-  <div id="hud">MokTrak Pro · جاهز</div>
+  <div id="hud">Trackvid · جاهز</div>
   <div id="fps">-- fps</div>
   <div id="zoomBadge">1.0×</div>
+  <div id="sensorBadge">📡 غير مفعّل</div>
   <div id="statusBar"></div>
   <div id="recIndicator">● تسجيل <span id="recTime">00:00</span></div>
-  <div id="hint">👆 نقرة مزدوجة للقفل · إصبعان للتكبير</div>
+  <div id="hint">ضع الكائن داخل المربع الأخضر ثم اضغط "تحديد"</div>
   <div id="panel"></div>
   <div id="logBox"></div>
 
@@ -75,10 +82,10 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
   </div>
 
   <div id="bottomBar">
-    <button class="ctrlBtn zoom" id="zoomOutBtn" title="تصغير">−</button>
-    <button class="ctrlBtn zoom" id="zoomInBtn" title="تكبير">+</button>
-    <button class="ctrlBtn" id="recenterBtn" title="إعادة ضبط">⌖</button>
-    <button class="ctrlBtn" id="resetBtn" title="إلغاء القفل">✕</button>
+    <button class="ctrlBtn" id="zoomOutBtn" title="تصغير">−</button>
+    <button class="ctrlBtn" id="zoomInBtn" title="تكبير">+</button>
+    <button class="ctrlBtn select" id="selectBtn" title="تحديد">🔴 تحديد</button>
+    <button class="ctrlBtn" id="resetBtn" title="إلغاء">✕</button>
     <button class="ctrlBtn rec" id="recordBtn" title="تسجيل">●</button>
     <button class="ctrlBtn" id="switchBtn" title="تبديل">⟳</button>
   </div>
@@ -91,35 +98,77 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 (function(){
 'use strict';
 
+// ═══════════════════════════════════════════════
+//  الإعدادات
+// ═══════════════════════════════════════════════
 const CFG = {
+  // القالب من داخل المربع
   patchSize: 22, initRegion: 30,
+
+  // البحث
   searchRadius: 22, coarseStep: 3, fineRadius: 3,
-  searchRadiusLost: 50, coarseStepLost: 6,
-  scales: [0.6, 0.75, 0.9, 1.0, 1.15, 1.35, 1.6, 1.9],
-  minScale: 0.5, maxScale: 2.2,
+  searchRadiusLost: 70, coarseStepLost: 7,
+
+  // المقاييس
+  scales: [0.35, 0.5, 0.65, 0.8, 0.92, 1.0, 1.1, 1.25, 1.45, 1.7, 2.0, 2.4],
+  minScale: 0.3, maxScale: 3.0,
+
+  // SAD
   minSAD: 3200, bestSAD: 900,
+
+  // التنعيم
   posSmoothing: 0.55, sizeSmoothing: 0.85,
+
+  // الأداء
   grayMaxDim: 480, frameIntervalMs: 25,
   templateUpdateEvery: 8,
   lostFramesToWarn: 20,
-  doubleTapMs: 350, doubleTapRadiusPx: 90,
-  tapMoveThreshold: 22, tapMaxDuration: 400,
-  espInterval: 100,
-  zoomMin: 1.0, zoomMax: 6.0,
+
+  // صندوق ثابت
+  boxScreenRatio: 0.42,   // نسبة الصندوق من أصغر بُعد للشاشة
+
+  // الزوم
+  zoomMin: 1.0, zoomMax: 8.0,
+
+  // التسجيل
   recMaxDim: 720,
+
+  // المستشعرات
+  sensorWeight: 0.35, gyroScale: 6.0,
+
+  // ═══ PID للسيرفو ═══
+  panKp: 0.06, panKi: 0.008, panKd: 0.015,
+  tiltKp: 0.06, tiltKi: 0.008, tiltKd: 0.015,
+  pidIntegralLimit: 200,
+  maxStep: 3.0,
+  deadzone: 15,
+
+  // حدود السيرفو
+  panMin: 10, panMax: 170, panCenter: 90,
+  tiltMin: 10, tiltMax: 170, tiltCenter: 90,
+  panInvert: false, tiltInvert: false,
+
+  // ESP
+  espInterval: 33,
+
   logMaxLines: 5,
   hideGraceMs: 800
 };
 
+// ═══════════════════════════════════════════════
+//  DOM
+// ═══════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const video = $('video'), canvas = $('overlay'), ctx = canvas.getContext('2d', {alpha: true});
 const videoWrap = $('videoWrap'), wrap = $('wrap');
 const hud = $('hud'), fpsEl = $('fps'), panel = $('panel');
 const startBtn = $('startBtn'), resetBtn = $('resetBtn'), switchBtn = $('switchBtn');
-const recordBtn = $('recordBtn'), hint = $('hint'), err = $('err');
+const recordBtn = $('recordBtn'), selectBtn = $('selectBtn');
+const hint = $('hint'), err = $('err');
 const statusBar = $('statusBar'), recIndicator = $('recIndicator'), recTime = $('recTime');
 const bottomBar = $('bottomBar'), logBox = $('logBox'), zoomBadge = $('zoomBadge');
-const zoomInBtn = $('zoomInBtn'), zoomOutBtn = $('zoomOutBtn'), recenterBtn = $('recenterBtn');
+const sensorBadge = $('sensorBadge');
+const zoomInBtn = $('zoomInBtn'), zoomOutBtn = $('zoomOutBtn');
 
 function setStatus(msg, duration) {
   statusBar.textContent = msg;
@@ -142,11 +191,14 @@ function addLog(text, isError) {
   while (logBox.children.length > CFG.logMaxLines) logBox.removeChild(logBox.firstChild);
 }
 
+// ═══════════════════════════════════════════════
+//  الحالة
+// ═══════════════════════════════════════════════
 let stream = null, running = false, facing = 'environment';
 let lastFrame = 0, fpsN = 0, fpsT = performance.now(), fps = 0;
 let rafId = 0, frameCount = 0;
-let tracked = null;
-let lastTap = null, pointerStart = null;
+let mode = 'idle';        // 'idle' أو 'locked'
+let tracked = null;       // كائن التتبع
 let zoom = 1.0;
 let recording = false, recorder = null, recChunks = [], recStartTime = 0, recTimer = 0;
 let hideTimer = null;
@@ -159,25 +211,116 @@ const scratchRegion = new Uint8Array(CFG.patchSize * CFG.patchSize);
 const recCanvas = document.createElement('canvas');
 const recCtx = recCanvas.getContext('2d');
 
-const pointers = new Map();
-let pinchStartDist = 0, pinchStartZoom = 1, isPinching = false;
+// ═══════════════════════════════════════════════
+//  PID Controller
+// ═══════════════════════════════════════════════
+class PID {
+  constructor(kp, ki, kd, integralLimit, outputLimit) {
+    this.kp = kp; this.ki = ki; this.kd = kd;
+    this.integral = 0; this.lastError = 0;
+    this.integralLimit = integralLimit;
+    this.outputLimit = outputLimit;
+    this.terms = {p: 0, i: 0, d: 0};
+  }
+  update(error, dt) {
+    if (dt <= 0) dt = 0.001;
+    const p = this.kp * error;
+    this.integral += error * dt;
+    if (this.integral > this.integralLimit) this.integral = this.integralLimit;
+    else if (this.integral < -this.integralLimit) this.integral = -this.integralLimit;
+    const i = this.ki * this.integral;
+    const d = this.kd * (error - this.lastError) / dt;
+    let output = p + i + d;
+    if (output > this.outputLimit) output = this.outputLimit;
+    else if (output < -this.outputLimit) output = -this.outputLimit;
+    this.lastError = error;
+    this.terms = {p, i, d};
+    return output;
+  }
+  reset() { this.integral = 0; this.lastError = 0; this.terms = {p:0,i:0,d:0}; }
+}
 
-function getTwoPointerDistance() {
-  const pts = Array.from(pointers.values());
-  if (pts.length < 2) return 0;
-  return Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+const servoCtrl = {
+  pan: CFG.panCenter,
+  tilt: CFG.tiltCenter,
+  panPID: new PID(CFG.panKp, CFG.panKi, CFG.panKd, CFG.pidIntegralLimit, CFG.maxStep),
+  tiltPID: new PID(CFG.tiltKp, CFG.tiltKi, CFG.tiltKd, CFG.pidIntegralLimit, CFG.maxStep),
+  lastT: 0,
+  lastDPan: 0, lastDTilt: 0,
+
+  update(errX, errY, now) {
+    let dt = (now - this.lastT) / 1000;
+    if (this.lastT === 0 || dt <= 0 || dt > 0.5) dt = 0.033;
+    this.lastT = now;
+
+    let ex = Math.abs(errX) < CFG.deadzone ? 0 : errX;
+    let ey = Math.abs(errY) < CFG.deadzone ? 0 : errY;
+
+    const dPanRaw  = this.panPID.update(ex, dt);
+    const dTiltRaw = this.tiltPID.update(ey, dt);
+
+    const dPan  = CFG.panInvert  ? -dPanRaw  : dPanRaw;
+    const dTilt = CFG.tiltInvert ? -dTiltRaw : dTiltRaw;
+
+    this.pan  -= dPan;
+    this.tilt += dTilt;
+
+    if (this.pan  < CFG.panMin)  this.pan  = CFG.panMin;
+    if (this.pan  > CFG.panMax)  this.pan  = CFG.panMax;
+    if (this.tilt < CFG.tiltMin) this.tilt = CFG.tiltMin;
+    if (this.tilt > CFG.tiltMax) this.tilt = CFG.tiltMax;
+
+    this.lastDPan = dPan;
+    this.lastDTilt = dTilt;
+  },
+  reset() {
+    this.pan = CFG.panCenter;
+    this.tilt = CFG.tiltCenter;
+    this.panPID.reset();
+    this.tiltPID.reset();
+    this.lastT = 0;
+    this.lastDPan = 0;
+    this.lastDTilt = 0;
+  }
+};
+
+// ═══════════════════════════════════════════════
+//  المستشعرات
+// ═══════════════════════════════════════════════
+const sensors = { supported: false, rotAlpha: 0, rotBeta: 0, rotGamma: 0, lastUpdate: 0 };
+
+function initSensors() {
+  if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', (e) => {
+      const r = e.rotationRate;
+      if (r) {
+        sensors.rotAlpha = r.alpha || 0;
+        sensors.rotBeta  = r.beta  || 0;
+        sensors.rotGamma = r.gamma || 0;
+      }
+      sensors.lastUpdate = performance.now();
+      sensors.supported = true;
+    }, true);
+  }
+  sensorBadge.style.display = 'block';
+  setTimeout(() => {
+    sensorBadge.textContent = sensors.supported ? '📡 المستشعرات نشطة' : '📡 المستشعرات معطلة';
+    if (sensors.supported) addLog('📡 المستشعرات متاحة');
+  }, 2000);
 }
 
 // ═══════════════════════════════════════════════
-//  ESP8266
+//  ESP8266 Sender
 // ═══════════════════════════════════════════════
 const espSender = {
-  ip: localStorage.getItem('moktrak_esp_ip') || '',
-  enabled: false, lastSend: 0, ok: false, fails: 0, timer: null, sentCount: 0,
+  ip: localStorage.getItem('trackvid_esp_ip') || '',
+  enabled: false, lastSend: 0, ok: false, fails: 0, timer: null,
+  sentCount: 0, lastPan: -1, lastTilt: -1,
+
   setIP(v) {
     this.ip = (v || '').trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-    if (this.ip) localStorage.setItem('moktrak_esp_ip', this.ip);
-    else localStorage.removeItem('moktrak_esp_ip');
+    if (this.ip) localStorage.setItem('trackvid_esp_ip', this.ip);
+    else localStorage.removeItem('trackvid_esp_ip');
   },
   ping() {
     if (!this.ip) return;
@@ -194,43 +337,40 @@ const espSender = {
   },
   send() {
     if (!this.enabled || !this.ip) return;
+    if (mode !== 'locked') return;
     const now = performance.now();
     if (now - this.lastSend < CFG.espInterval) return;
     this.lastSend = now;
-    if (!tracked) { this._fire(`http://${this.ip}/t?live=0`); return; }
-    const vScaleX = (video.videoWidth || 640) / grayW;
-    const vScaleY = (video.videoHeight || 480) / grayH;
-    const vcx = tracked.cx * vScaleX, vcy = tracked.cy * vScaleY;
-    const vw = CFG.patchSize * tracked.scale * vScaleX;
-    const vh = CFG.patchSize * tracked.scale * vScaleY;
-    const x = Math.round(vcx - (video.videoWidth / 2));
-    const y = Math.round(vcy - (video.videoHeight / 2));
-    const w = Math.round(vw), h = Math.round(vh);
-    const vx = Math.round(tracked.velocity[0] * vScaleX);
-    const vy = Math.round(tracked.velocity[1] * vScaleY);
-    const sp = Math.round(Math.hypot(vx, vy));
-    const liveFlag = tracked.live ? 1 : 0;
-    this._fire(`http://${this.ip}/t?x=${x}&y=${y}&w=${w}&h=${h}&vx=${vx}&vy=${vy}&s=${sp}&live=${liveFlag}`);
+
+    const pan = servoCtrl.pan.toFixed(1);
+    const tilt = servoCtrl.tilt.toFixed(1);
+    if (pan === this.lastPan && tilt === this.lastTilt) return;
+    this.lastPan = pan;
+    this.lastTilt = tilt;
+
+    this._fire(`http://${this.ip}/servo?pan=${pan}&tilt=${tilt}`);
     this.sentCount++;
-    if (this.sentCount <= 3 || this.sentCount % 20 === 0) {
-      addLog(`📡 x=${x} y=${y} w=${w} h=${h}`);
+    if (this.sentCount <= 3 || this.sentCount % 30 === 0) {
+      addLog(`📡 pan=${pan}° tilt=${tilt}°`);
     }
   },
   stop() {
     if (!this.ip) return;
-    const img = new Image();
-    img.src = `http://${this.ip}/t?live=0&_=${Date.now()}`;
-    addLog('⏹ إبلاغ ESP بالتوقف');
+    this._fire(`http://${this.ip}/reset`);
+    addLog('⏹ إعادة ESP إلى المركز');
   },
   _fire(url) {
     const self = this;
     const img = new Image();
-    img.onload = img.onerror = () => { self.ok = true; self.fails = 0; updateEspUI(); };
-    img.src = url + '&_=' + Date.now();
+    img.onload = img.onerror = () => {
+      if (!self.ok) { self.ok = true; updateEspUI(); }
+      self.fails = 0;
+    };
+    img.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_=' + Date.now();
     clearTimeout(self.timer);
     self.timer = setTimeout(() => {
       self.fails++;
-      if (self.fails >= 3 && self.ok) {
+      if (self.fails >= 5 && self.ok) {
         self.ok = false;
         addLog('⚠ فُقد الاتصال بـ ESP', true);
         updateEspUI();
@@ -242,7 +382,7 @@ function updateEspUI() {
   const dot = $('espDot'), btn = $('espBtn');
   if (!dot) return;
   dot.className = 'espDot ' + (espSender.enabled ? (espSender.ok ? 'on' : 'off') : '');
-  if (espSender.enabled && !espSender.ok && espSender.fails < 3) dot.className = 'espDot mid';
+  if (espSender.enabled && !espSender.ok && espSender.fails < 5) dot.className = 'espDot mid';
   btn.classList.toggle('off', !espSender.enabled);
   btn.textContent = espSender.enabled ? 'قطع' : 'ربط';
 }
@@ -251,18 +391,14 @@ $('espBtn').addEventListener('click', e => {
   const ip = $('espIP');
   if (espSender.enabled) {
     espSender.enabled = false; espSender.ok = false;
-    addLog('⏹ قطع الاتصال');
-    espSender.stop();
-    updateEspUI();
-    return;
+    addLog('⏹ قطع الاتصال'); updateEspUI(); return;
   }
   const v = ip.value.trim();
   if (!v) { ip.focus(); return; }
   espSender.setIP(v);
   espSender.enabled = true; espSender.fails = 0; espSender.sentCount = 0;
   addLog('🔗 محاولة الاتصال بـ ' + v);
-  espSender.ping();
-  updateEspUI();
+  espSender.ping(); updateEspUI();
 });
 $('espIP').addEventListener('keypress', e => { if (e.key === 'Enter') $('espBtn').click(); });
 if (espSender.ip) $('espIP').value = espSender.ip;
@@ -289,26 +425,15 @@ function fit() {
   const scale = Math.max(r.width / vw, r.height / vh);
   return { scale, ox: (r.width - vw * scale) / 2, oy: (r.height - vh * scale) / 2, vw, vh, w: r.width, h: r.height };
 }
-
-// ✅ شاشة → إحداثيات محلية (كانفس) — نزيل الزوم
-function screenToLocal(clientX, clientY) {
-  const r = wrap.getBoundingClientRect();
-  const W = r.width, H = r.height;
-  const lx = W/2 + (clientX - r.left - W/2) / zoom;
-  const ly = H/2 + (clientY - r.top  - H/2) / zoom;
-  return [lx, ly];
-}
-function localToVideo(lx, ly) {
-  const f = fit();
-  return [(lx - f.ox) / f.scale, (ly - f.oy) / f.scale];
-}
-// ✅ الفيديو → إحداثيات محلية (كانفس) — بدون زوم (الزوم يأتي من CSS على الحاوية)
 function videoToLocal(vx, vy) {
   const f = fit();
   return [f.ox + vx * f.scale, f.oy + vy * f.scale];
 }
 function videoToGray(x, y) {
   return [x * grayW / (video.videoWidth || 640), y * grayH / (video.videoHeight || 480)];
+}
+function grayToVideo(x, y) {
+  return [x * (video.videoWidth || 640) / grayW, y * (video.videoHeight || 480) / grayH];
 }
 
 // ═══════════════════════════════════════════════
@@ -359,48 +484,64 @@ function sad(a, b) {
 }
 
 // ═══════════════════════════════════════════════
-//  القفل
+//  الصندوق الثابت
 // ═══════════════════════════════════════════════
-function lockAt(clientX, clientY) {
-  const [lx, ly] = screenToLocal(clientX, clientY);
-  const [vx, vy] = localToVideo(lx, ly);
-  const [gx, gy] = videoToGray(vx, vy);
+function getBoxScreenRect() {
+  // إحداثيات على الكانفس (قبل الزوم) — نُصغّر الحجم بنسبة zoom ليبقى ثابتًا على الشاشة
+  const W = canvas.width / (window.devicePixelRatio || 1);
+  const H = canvas.height / (window.devicePixelRatio || 1);
+  const size = Math.min(W, H) * CFG.boxScreenRatio / zoom;
+  const cx = W / 2;
+  const cy = H / 2;
+  return { x: cx - size/2, y: cy - size/2, w: size, h: size, cx, cy };
+}
+
+// ═══════════════════════════════════════════════
+//  تحديد الهدف
+// ═══════════════════════════════════════════════
+function lockObject() {
   const gray = grabGray();
-  if (!gray) return;
+  if (!gray) { addLog('⚠ الكاميرا غير جاهزة', true); return; }
+  // القالب من مركز الصورة الرمادية (لأن الصندوق في وسط الشاشة = وسط الفيديو)
+  const gcx = grayW / 2;
+  const gcy = grayH / 2;
   const temp = new Uint8Array(CFG.patchSize * CFG.patchSize);
-  extractRegion(gray, gx, gy, CFG.initRegion, temp);
+  extractRegion(gray, gcx, gcy, CFG.initRegion, temp);
   tracked = {
     template: temp.slice(),
-    cx: gx, cy: gy,
+    cx: gcx, cy: gcy,
     scale: CFG.initRegion / CFG.patchSize,
     initRegionSize: CFG.initRegion,
     lastSeen: performance.now(),
     velocity: [0, 0],
-    sad: 0, live: true, lostCount: 0
+    sad: 0, live: true, lostCount: 0,
+    lastGyroTime: performance.now()
   };
-  hint.style.display = 'none';
-  resetBtn.style.display = 'flex';
-  recenterBtn.style.display = 'flex';
+  mode = 'locked';
+  servoCtrl.reset();
   panel.style.display = 'block';
+  panel.classList.add('locked');
   logBox.style.display = 'flex';
-  hud.textContent = '🎯 مقفل';
-  setStatus('✅ تم القفل', 1500);
-  addLog('🎯 قفل على كائن');
+  hud.textContent = '🔴 الهدف مقفل';
+  selectBtn.style.display = 'none';
+  setStatus('🔴 تم التحديد — PID يبدأ', 2000);
+  addLog('🔴 تحديد — PID يعمل');
 }
-function unlock() {
-  if (!tracked) return;
+function unlockObject() {
   tracked = null;
-  resetBtn.style.display = 'none';
-  recenterBtn.style.display = 'none';
+  mode = 'idle';
   panel.style.display = 'none';
-  hud.textContent = 'MokTrak Pro · جاهز';
-  setStatus('إلغاء القفل', 1200);
-  addLog('✕ إلغاء القفل');
+  panel.classList.remove('locked');
+  hud.textContent = 'Trackvid · جاهز';
+  selectBtn.style.display = 'flex';
+  selectBtn.textContent = '🔴 تحديد';
+  servoCtrl.reset();
+  addLog('✕ إلغاء التحديد');
   espSender.stop();
 }
 
 // ═══════════════════════════════════════════════
-//  التتبع — دائم
+//  خطوة التتبع
 // ═══════════════════════════════════════════════
 function trackStep(now) {
   if (!tracked) return;
@@ -408,17 +549,32 @@ function trackStep(now) {
   if (!gray) return;
   const P = CFG.patchSize;
   const template = tracked.template;
-  const baseX = tracked.cx, baseY = tracked.cy, baseScale = tracked.scale;
+
+  let sensorPredX = 0, sensorPredY = 0;
+  const dtGyro = (now - tracked.lastGyroTime) / 1000;
+  tracked.lastGyroTime = now;
+  if (sensors.supported && dtGyro < 0.5) {
+    sensorPredX = -sensors.rotGamma * CFG.gyroScale * dtGyro;
+    sensorPredY = -sensors.rotBeta  * CFG.gyroScale * dtGyro;
+    sensorPredX = Math.max(-30, Math.min(30, sensorPredX));
+    sensorPredY = Math.max(-30, Math.min(30, sensorPredY));
+  }
+
+  const predictX = tracked.cx + tracked.velocity[0] + sensorPredX * CFG.sensorWeight;
+  const predictY = tracked.cy + tracked.velocity[1] + sensorPredY * CFG.sensorWeight;
+  const baseScale = tracked.scale;
   const regionBase = P * baseScale;
-  let best = { sad: Infinity, x: baseX, y: baseY, scale: baseScale };
+
+  let best = { sad: Infinity, x: predictX, y: predictY, scale: baseScale };
   const lost = tracked.lostCount > CFG.lostFramesToWarn;
   const R = lost ? CFG.searchRadiusLost : CFG.searchRadius;
   const step = lost ? CFG.coarseStepLost : CFG.coarseStep;
+
   for (let dy = -R; dy <= R; dy += step) {
     for (let dx = -R; dx <= R; dx += step) {
-      extractRegion(gray, baseX + dx, baseY + dy, regionBase, scratchRegion);
+      extractRegion(gray, predictX + dx, predictY + dy, regionBase, scratchRegion);
       const s = sad(template, scratchRegion);
-      if (s < best.sad) { best.sad = s; best.x = baseX + dx; best.y = baseY + dy; best.scale = baseScale; }
+      if (s < best.sad) { best.sad = s; best.x = predictX + dx; best.y = predictY + dy; best.scale = baseScale; }
     }
   }
   const FR = CFG.fineRadius, cx0 = best.x, cy0 = best.y;
@@ -437,6 +593,7 @@ function trackStep(now) {
     const s = sad(template, scratchRegion);
     if (s < best.sad * 0.92) { best.sad = s; best.scale = sc; }
   }
+
   if (best.sad < CFG.minSAD) {
     const a = CFG.posSmoothing;
     const newX = tracked.cx * (1 - a) + best.x * a;
@@ -461,25 +618,31 @@ function trackStep(now) {
     }
   } else {
     tracked.lostCount++;
-    tracked.cx += tracked.velocity[0];
-    tracked.cy += tracked.velocity[1];
+    tracked.cx += tracked.velocity[0] + sensorPredX * CFG.sensorWeight;
+    tracked.cy += tracked.velocity[1] + sensorPredY * CFG.sensorWeight;
     tracked.velocity[0] *= 0.9;
     tracked.velocity[1] *= 0.9;
     if (tracked.lostCount >= CFG.lostFramesToWarn && tracked.live) {
       tracked.live = false;
-      addLog('⚠ الهدف مفقود — القفل محفوظ');
+      addLog('⚠ الهدف مفقود');
     }
   }
 }
 
 // ═══════════════════════════════════════════════
-//  اللمس — pinch + double-tap
+//  اللمس (pinch فقط الآن — لا نقرة مزدوجة)
 // ═══════════════════════════════════════════════
+const pointers = new Map();
+let pinchStartDist = 0, pinchStartZoom = 1, isPinching = false;
+function getTwoPointerDistance() {
+  const pts = Array.from(pointers.values());
+  if (pts.length < 2) return 0;
+  return Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+}
 function setZoom(z, fromPinch) {
   const nz = Math.max(CFG.zoomMin, Math.min(CFG.zoomMax, z));
   if (Math.abs(nz - zoom) < 0.001) return;
   zoom = nz;
-  // أثناء pinch: بدون transition (استجابة فورية)
   if (fromPinch) videoWrap.style.transition = 'none';
   else videoWrap.style.transition = 'transform .15s ease-out';
   videoWrap.style.transform = `scale(${zoom})`;
@@ -488,7 +651,6 @@ function setZoom(z, fromPinch) {
   clearTimeout(setZoom._t);
   setZoom._t = setTimeout(() => { zoomBadge.style.display = 'none'; }, 1200);
 }
-
 canvas.addEventListener('pointerdown', e => {
   if (!running) return;
   try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
@@ -497,53 +659,23 @@ canvas.addEventListener('pointerdown', e => {
     isPinching = true;
     pinchStartDist = getTwoPointerDistance();
     pinchStartZoom = zoom;
-    pointerStart = null;
-    lastTap = null;
-  } else if (pointers.size === 1) {
-    pointerStart = { x: e.clientX, y: e.clientY, t: performance.now() };
   }
 });
-
 canvas.addEventListener('pointermove', e => {
   if (!pointers.has(e.pointerId)) return;
   pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
   if (isPinching && pointers.size === 2 && pinchStartDist > 0) {
     const d = getTwoPointerDistance();
-    const factor = d / pinchStartDist;
-    setZoom(pinchStartZoom * factor, true);
+    setZoom(pinchStartZoom * (d / pinchStartDist), true);
   }
 });
-
 function endPointer(e) {
   pointers.delete(e.pointerId);
   try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
-
   if (pointers.size < 2) {
-    if (isPinching) {
-      // انتهاء pinch — أعِد الـ transition
-      videoWrap.style.transition = 'transform .15s ease-out';
-    }
+    if (isPinching) videoWrap.style.transition = 'transform .15s ease-out';
     isPinching = false;
     pinchStartDist = 0;
-  }
-  if (pointers.size === 0 && !isPinching && pointerStart) {
-    const dx = e.clientX - pointerStart.x;
-    const dy = e.clientY - pointerStart.y;
-    const moved = Math.hypot(dx, dy);
-    const dt = performance.now() - pointerStart.t;
-    pointerStart = null;
-    if (moved > CFG.tapMoveThreshold || dt > CFG.tapMaxDuration) return;
-    const now = performance.now();
-    if (lastTap && (now - lastTap.time) < CFG.doubleTapMs &&
-        Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < CFG.doubleTapRadiusPx) {
-      if (tracked) unlock();
-      lockAt(e.clientX, e.clientY);
-      lastTap = null;
-      return;
-    }
-    lastTap = { x: e.clientX, y: e.clientY, time: now };
-  } else if (pointers.size === 0) {
-    pointerStart = null;
   }
 }
 canvas.addEventListener('pointerup', endPointer);
@@ -551,11 +683,8 @@ canvas.addEventListener('pointercancel', endPointer);
 
 zoomInBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom * 1.25, false); });
 zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom / 1.25, false); });
-recenterBtn.addEventListener('click', e => {
-  e.stopPropagation();
-  setZoom(1.0, false);
-  addLog('⌖ إعادة ضبط الزوم');
-});
+selectBtn.addEventListener('click', e => { e.stopPropagation(); lockObject(); });
+resetBtn.addEventListener('click', e => { e.stopPropagation(); unlockObject(); });
 
 // ═══════════════════════════════════════════════
 //  التسجيل
@@ -589,14 +718,31 @@ function startRecording() {
   recorder.onstop = () => {
     if (recChunks.length === 0) { addLog('⚠ لا توجد بيانات', true); return; }
     const blob = new Blob(recChunks, { type: mime || 'video/webm' });
+    const ext = (mime && mime.includes('mp4')) ? 'mp4' : 'webm';
+    const filename = `Trackvid_${Date.now()}.${ext}`;
+    const mimeType = mime || 'video/webm';
+    if (window.AndroidBridge && window.AndroidBridge.saveVideo) {
+      addLog('💾 حفظ الفيديو…');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        try {
+          const base64 = reader.result.split(',')[1];
+          const res = AndroidBridge.saveVideo(base64, filename, mimeType);
+          if (res && res.startsWith('OK')) {
+            addLog('✅ حُفظ في المعرض');
+            setStatus('✅ حُفظ في معرض الصور', 2500);
+          } else { addLog('❌ فشل: ' + res, true); }
+        } catch (e) { addLog('❌ ' + e.message, true); }
+      };
+      reader.readAsDataURL(blob);
+      return;
+    }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const ext = (mime && mime.includes('mp4')) ? 'mp4' : 'webm';
-    a.href = url; a.download = `MokTrak_${Date.now()}.${ext}`;
+    a.href = url; a.download = filename;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 5000);
     addLog('✅ حُفظ الفيديو');
-    setStatus('✅ حُفظ التسجيل', 2500);
   };
   recorder.start(1000);
   recording = true;
@@ -605,7 +751,6 @@ function startRecording() {
   recIndicator.style.display = 'flex';
   recTimer = setInterval(() => { recTime.textContent = fmtTime(performance.now() - recStartTime); }, 500);
   addLog('⏺ بدأ التسجيل');
-  setStatus('⏺ بدأ التسجيل', 1500);
 }
 function stopRecording() {
   if (!recording || !recorder) return;
@@ -630,180 +775,207 @@ function drawForRecording() {
   const srcW = VW / Z, srcH = VH / Z;
   const srcX = (VW - srcW) / 2, srcY = (VH - srcH) / 2;
   recCtx.drawImage(video, srcX, srcY, srcW, srcH, 0, 0, CW, CH);
-  if (tracked) {
+
+  // الصندوق الثابت في مركز التسجيل
+  const boxSize = Math.min(CW, CH) * CFG.boxScreenRatio;
+  const bx = CW/2 - boxSize/2, by = CH/2 - boxSize/2;
+  recCtx.strokeStyle = mode === 'locked' ? '#ff3c3c' : '#00ff88';
+  recCtx.lineWidth = Math.max(2, Math.min(CW, CH) * 0.005);
+  recCtx.shadowColor = recCtx.strokeStyle;
+  recCtx.shadowBlur = 8;
+  recCtx.strokeRect(bx, by, boxSize, boxSize);
+  recCtx.shadowBlur = 0;
+  // صليب
+  const ccx = CW/2, ccy = CH/2;
+  const cs = boxSize * 0.14;
+  recCtx.beginPath();
+  recCtx.moveTo(ccx-cs, ccy); recCtx.lineTo(ccx-cs*0.3, ccy);
+  recCtx.moveTo(ccx+cs*0.3, ccy); recCtx.lineTo(ccx+cs, ccy);
+  recCtx.moveTo(ccx, ccy-cs); recCtx.lineTo(ccx, ccy-cs*0.3);
+  recCtx.moveTo(ccx, ccy+cs*0.3); recCtx.lineTo(ccx, ccy+cs);
+  recCtx.stroke();
+
+  // علامة الكائن المتتبع
+  if (mode === 'locked' && tracked) {
     const vScaleX = VW / grayW, vScaleY = VH / grayH;
     const ovx = tracked.cx * vScaleX, ovy = tracked.cy * vScaleY;
-    const ovw = CFG.patchSize * tracked.scale * vScaleX;
-    const ovh = CFG.patchSize * tracked.scale * vScaleY;
     const kx = CW / srcW, ky = CH / srcH;
-    const bx = (ovx - ovw/2 - srcX) * kx, by = (ovy - ovh/2 - srcY) * ky;
-    const bw = ovw * kx, bh = ovh * ky;
-    if (tracked.live) {
-      recCtx.strokeStyle = '#00ff88';
-      recCtx.lineWidth = Math.max(2, Math.min(CW, CH) * 0.005);
-      recCtx.shadowColor = '#00ff88'; recCtx.shadowBlur = 8;
-      recCtx.strokeRect(bx, by, bw, bh);
-      recCtx.shadowBlur = 0;
-      const ccx = bx + bw/2, ccy = by + bh/2;
-      const cs = Math.max(10, Math.min(bw, bh) * 0.2);
-      recCtx.beginPath();
-      recCtx.moveTo(ccx - cs, ccy); recCtx.lineTo(ccx - cs/3, ccy);
-      recCtx.moveTo(ccx + cs/3, ccy); recCtx.lineTo(ccx + cs, ccy);
-      recCtx.moveTo(ccx, ccy - cs); recCtx.lineTo(ccx, ccy - cs/3);
-      recCtx.moveTo(ccx, ccy + cs/3); recCtx.lineTo(ccx, ccy + cs);
-      recCtx.stroke();
-    }
+    const tx = (ovx - srcX) * kx;
+    const ty = (ovy - srcY) * ky;
+    recCtx.beginPath();
+    recCtx.arc(tx, ty, 8, 0, Math.PI*2);
+    recCtx.stroke();
   }
-  recCtx.strokeStyle = 'rgba(255,235,59,.9)';
-  recCtx.lineWidth = 2;
-  const mcx = CW/2, mcy = CH/2;
-  recCtx.beginPath();
-  recCtx.moveTo(mcx-12, mcy); recCtx.lineTo(mcx-4, mcy);
-  recCtx.moveTo(mcx+4, mcy); recCtx.lineTo(mcx+12, mcy);
-  recCtx.moveTo(mcx, mcy-12); recCtx.lineTo(mcx, mcy-4);
-  recCtx.moveTo(mcx, mcy+4); recCtx.lineTo(mcx, mcy+12);
-  recCtx.stroke();
 }
 
 // ═══════════════════════════════════════════════
 //  الرسم
 // ═══════════════════════════════════════════════
-function drawCross(cx, cy, size, live) {
+function drawFixedBox() {
+  const rect = getBoxScreenRect();
+  const isLocked = mode === 'locked';
+  const color = isLocked ? '#ff3c3c' : '#00ff88';
+
   ctx.save();
-  ctx.strokeStyle = live ? '#00ff88' : '#ffca28';
-  ctx.fillStyle = ctx.strokeStyle;
-  ctx.shadowColor = ctx.strokeStyle;
-  ctx.shadowBlur = live ? 9 : 3;
-  ctx.lineWidth = 2;
-  const g = size * .28, a = size;
+  ctx.strokeStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = isLocked ? 14 : 10;
+  ctx.lineWidth = 3;
+  ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+
+  // زوايا مُقوّاة
+  const cl = Math.min(rect.w, rect.h) * 0.18;
+  ctx.lineWidth = 5;
   ctx.beginPath();
-  ctx.moveTo(cx-a, cy); ctx.lineTo(cx-g, cy);
-  ctx.moveTo(cx+g, cy); ctx.lineTo(cx+a, cy);
-  ctx.moveTo(cx, cy-a); ctx.lineTo(cx, cy-g);
-  ctx.moveTo(cx, cy+g); ctx.lineTo(cx, cy+a);
+  ctx.moveTo(rect.x, rect.y+cl); ctx.lineTo(rect.x, rect.y); ctx.lineTo(rect.x+cl, rect.y);
+  ctx.moveTo(rect.x+rect.w-cl, rect.y); ctx.lineTo(rect.x+rect.w, rect.y); ctx.lineTo(rect.x+rect.w, rect.y+cl);
+  ctx.moveTo(rect.x+rect.w, rect.y+rect.h-cl); ctx.lineTo(rect.x+rect.w, rect.y+rect.h); ctx.lineTo(rect.x+rect.w-cl, rect.y+rect.h);
+  ctx.moveTo(rect.x+cl, rect.y+rect.h); ctx.lineTo(rect.x, rect.y+rect.h); ctx.lineTo(rect.x, rect.y+rect.h-cl);
   ctx.stroke();
+
+  // الصليب
+  ctx.lineWidth = 2.5;
+  const cs = Math.min(rect.w, rect.h) * 0.18;
+  const cx = rect.cx, cy = rect.cy;
+  ctx.beginPath();
+  ctx.moveTo(cx-cs, cy); ctx.lineTo(cx-cs*0.28, cy);
+  ctx.moveTo(cx+cs*0.28, cy); ctx.lineTo(cx+cs, cy);
+  ctx.moveTo(cx, cy-cs); ctx.lineTo(cx, cy-cs*0.28);
+  ctx.moveTo(cx, cy+cs*0.28); ctx.lineTo(cx, cy+cs);
+  ctx.stroke();
+
+  // دائرة داخلية صغيرة
   ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(cx, cy, g*.9, 0, Math.PI*2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill();
-  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, cs*0.32, 0, Math.PI*2);
+  ctx.stroke();
+
+  // نقطة
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 2.2, 0, Math.PI*2);
+  ctx.fill();
+
+  // 4 أقواس زاوية
+  ctx.lineWidth = 3;
+  const r2 = cs + 5, arcLen = Math.PI/4;
   for (let k = 0; k < 4; k++) {
-    const ang = k*Math.PI/2 + Math.PI/4;
-    ctx.beginPath(); ctx.arc(cx, cy, a+4, ang-.18, ang+.18); ctx.stroke();
+    const ang = k*Math.PI/2 + Math.PI/4 - arcLen/2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r2, ang, ang+arcLen);
+    ctx.stroke();
   }
-  ctx.restore();
-}
-function drawCenterMarker(cx, cy) {
-  ctx.save();
-  ctx.strokeStyle = 'rgba(255,235,59,.85)';
-  ctx.fillStyle = 'rgba(255,235,59,.85)';
-  ctx.shadowColor = '#ffeb3b'; ctx.shadowBlur = 6;
-  ctx.lineWidth = 1.5;
-  const s = 12, g = 4;
-  ctx.beginPath();
-  ctx.moveTo(cx-s, cy); ctx.lineTo(cx-g, cy);
-  ctx.moveTo(cx+g, cy); ctx.lineTo(cx+s, cy);
-  ctx.moveTo(cx, cy-s); ctx.lineTo(cx, cy-g);
-  ctx.moveTo(cx, cy+g); ctx.lineTo(cx, cy+s);
-  ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, 1.5, 0, Math.PI*2); ctx.fill();
+
   ctx.restore();
 }
 
-// ✅ يستخدم videoToLocal بدون زوم (لأن الحاوية مضروبة بالزوم في CSS)
-function drawTracked() {
-  const f = fit();
+function drawTrackedMarker() {
+  if (mode !== 'locked' || !tracked) return;
   const vScaleX = (video.videoWidth || 640) / grayW;
   const vScaleY = (video.videoHeight || 480) / grayH;
-  if (tracked) {
-    const regionPx = CFG.patchSize * tracked.scale;
-    const vx = tracked.cx * vScaleX, vy = tracked.cy * vScaleY;
-    const vw = regionPx * vScaleX, vh = regionPx * vScaleY;
-    const [bx, by] = videoToLocal(vx - vw/2, vy - vh/2);
-    const [bx2, by2] = videoToLocal(vx + vw/2, vy + vh/2);
-    const bw = bx2 - bx, bh = by2 - by;
-    const objCx = bx + bw/2, objCy = by + bh/2;
-    const scx = f.w/2, scy = f.h/2;
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255,235,59,.4)';
-    ctx.lineWidth = 1.2; ctx.setLineDash([5, 5]);
-    ctx.beginPath(); ctx.moveTo(scx, scy); ctx.lineTo(objCx, objCy); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.restore();
-    ctx.save();
-    ctx.strokeStyle = tracked.live ? '#00ff88' : '#ffca28';
-    ctx.lineWidth = 1.8;
-    ctx.shadowColor = ctx.strokeStyle;
-    ctx.shadowBlur = tracked.live ? 8 : 3;
-    ctx.strokeRect(bx, by, bw, bh);
-    ctx.shadowBlur = 0;
-    const cl = Math.min(bw, bh) * 0.18;
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(bx, by+cl); ctx.lineTo(bx, by); ctx.lineTo(bx+cl, by);
-    ctx.moveTo(bx+bw-cl, by); ctx.lineTo(bx+bw, by); ctx.lineTo(bx+bw, by+cl);
-    ctx.moveTo(bx+bw, by+bh-cl); ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx+bw-cl, by+bh);
-    ctx.moveTo(bx+cl, by+bh); ctx.lineTo(bx, by+bh); ctx.lineTo(bx, by+bh-cl);
-    ctx.stroke();
-    ctx.restore();
-    const crossSize = Math.max(12, Math.min(bw, bh) * 0.18);
-    drawCross(objCx, objCy, crossSize, tracked.live);
-  }
-  drawCenterMarker(f.w/2, f.h/2);
-}
-// ✅ drawPendingTap يقسم على zoom (لأن الإحداثيات على الشاشة)
-function drawPendingTap(now) {
-  if (!lastTap) return;
-  const age = now - lastTap.time;
-  if (age > CFG.doubleTapMs) return;
-  const r = canvas.getBoundingClientRect();
-  const x = (lastTap.x - r.left) / zoom;
-  const y = (lastTap.y - r.top) / zoom;
-  const alpha = 1 - age / CFG.doubleTapMs;
+  const vx = tracked.cx * vScaleX;
+  const vy = tracked.cy * vScaleY;
+  const [sx, sy] = videoToLocal(vx, vy);
+  // ملاحظة: هذه الإحداثيات محلية داخل الكانفس، لكن الكانفس مُكبَّر بـ CSS zoom
+  // لذلك الموقع الصحيح على الشاشة = sx, sy مباشرة (لأن الكانفس نفسه مُكبَّر)
+  // لكن نحن نرسم داخل الكانفس قبل الزوم، لذا القيم صحيحة كما هي
+
+  const live = tracked.live;
   ctx.save();
-  ctx.strokeStyle = `rgba(255,235,59,${alpha})`;
-  ctx.lineWidth = 2 / zoom;
-  ctx.beginPath(); ctx.arc(x, y, (12 + (1-alpha)*12) / zoom, 0, Math.PI*2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x, y, 3 / zoom, 0, Math.PI*2);
-  ctx.fillStyle = `rgba(255,235,59,${alpha})`;
+  ctx.strokeStyle = live ? '#ffeb3b' : 'rgba(255,235,59,0.5)';
+  ctx.fillStyle = ctx.strokeStyle;
+  ctx.shadowColor = '#ffeb3b';
+  ctx.shadowBlur = live ? 8 : 3;
+  ctx.lineWidth = 2;
+
+  // مربع صغير حول الكائن
+  const boxS = Math.max(20, CFG.patchSize * tracked.scale * vScaleX * ((video.videoWidth||640)/grayW) / vScaleX * 0.5);
+  // ملاحظة: نبسط — نرسم مربع بحجم ثابت
+  const s = 22 / zoom;
+  ctx.strokeRect(sx - s/2, sy - s/2, s, s);
+
+  // نقطة
+  ctx.beginPath();
+  ctx.arc(sx, sy, 2.5, 0, Math.PI*2);
   ctx.fill();
+
   ctx.restore();
 }
+
 function updatePanel(now) {
   if (!tracked) return;
   const vScaleX = (video.videoWidth || 640) / grayW;
   const vScaleY = (video.videoHeight || 480) / grayH;
-  const vcx = tracked.cx * vScaleX, vcy = tracked.cy * vScaleY;
-  const relX = vcx - (video.videoWidth / 2);
-  const relY = vcy - (video.videoHeight / 2);
-  const vw = CFG.patchSize * tracked.scale * vScaleX;
-  const vh = CFG.patchSize * tracked.scale * vScaleY;
-  const vvx = tracked.velocity[0] * vScaleX;
-  const vvy = tracked.velocity[1] * vScaleY;
-  const speed = Math.hypot(vvx, vvy);
+  const boxCxGray = grayW / 2;
+  const boxCyGray = grayH / 2;
+  // الإزاحة عن مركز الصندوق (بكسل الفيديو)
+  const offX = (tracked.cx - boxCxGray) * vScaleX;
+  const offY = (tracked.cy - boxCyGray) * vScaleY;
   const age = now - tracked.lastSeen;
   let status = 'نشط', cls = 'good';
-  if (!tracked.live) { status = 'مفقود'; cls = 'bad'; }
+  if (!tracked.live) { status = 'بحث'; cls = 'warn'; }
   else if (age > 300) { status = 'استعادة'; cls = 'warn'; }
+
+  const pT = servoCtrl.panPID.terms;
+  const tT = servoCtrl.tiltPID.terms;
+
+  // التغير المُرسل للسيرفو
+  const dPanSend  = -servoCtrl.lastDPan * (CFG.panInvert  ? -1 : 1);
+  const dTiltSend =  servoCtrl.lastDTilt * (CFG.tiltInvert ? -1 : 1);
+
+  const panCls  = dPanSend  > 0.05 ? 'delta-pos' : (dPanSend  < -0.05 ? 'delta-neg' : '');
+  const tiltCls = dTiltSend > 0.05 ? 'delta-pos' : (dTiltSend < -0.05 ? 'delta-neg' : '');
+
   panel.innerHTML =
-    '<div class="title">🎯 الهدف</div>' +
+    '<div class="title">🔴 هدف مقفل</div>' +
     '<div class="row"><span class="k">الحالة</span><span class="'+cls+'">'+status+'</span></div>' +
-    '<div class="row"><span class="k">x</span><span class="v">'+relX.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">y</span><span class="v">'+relY.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">w×h</span><span class="v">'+vw.toFixed(0)+'×'+vh.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">سرعة</span><span class="v">'+speed.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">زوم</span><span class="v">'+zoom.toFixed(2)+'×</span></div>' +
+    '<div class="row"><span class="k">إزاحة x</span><span class="v">'+offX.toFixed(0)+'</span></div>' +
+    '<div class="row"><span class="k">إزاحة y</span><span class="v">'+offY.toFixed(0)+'</span></div>' +
     '<div class="row"><span class="k">SAD</span><span class="v">'+tracked.sad.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">ESP</span><span class="v">'+(espSender.ok?'✅':'⏸')+'</span></div>';
+
+    '<div class="sub">🎛 التغير المطلوب</div>' +
+    '<div class="row"><span class="k">ΔPan</span><span class="v '+panCls+'">'+
+      (dPanSend>=0?'+':'')+dPanSend.toFixed(2)+'°</span></div>' +
+    '<div class="row"><span class="k">ΔTilt</span><span class="v '+tiltCls+'">'+
+      (dTiltSend>=0?'+':'')+dTiltSend.toFixed(2)+'°</span></div>' +
+
+    '<div class="sub">📐 الزوايا الحالية</div>' +
+    '<div class="row"><span class="k">Pan</span><span class="v">'+servoCtrl.pan.toFixed(1)+'°</span></div>' +
+    '<div class="row"><span class="k">Tilt</span><span class="v">'+servoCtrl.tilt.toFixed(1)+'°</span></div>' +
+
+    '<div class="sub">🧮 PID</div>' +
+    '<div class="row"><span class="k">P</span><span class="v">'+
+      pT.p.toFixed(2)+' / '+tT.p.toFixed(2)+'</span></div>' +
+    '<div class="row"><span class="k">I</span><span class="v">'+
+      pT.i.toFixed(2)+' / '+tT.i.toFixed(2)+'</span></div>' +
+    '<div class="row"><span class="k">D</span><span class="v">'+
+      pT.d.toFixed(2)+' / '+tT.d.toFixed(2)+'</span></div>' +
+
+    '<div class="row" style="margin-top:4px"><span class="k">ESP</span><span class="v">'+
+      (espSender.ok?'✅':'⏸')+'</span></div>';
+
+  // حساب PID بناءً على الإزاحة
+  servoCtrl.update(offX, offY, now);
   espSender.send();
 }
+
 function render(now) {
   const r = wrap.getBoundingClientRect();
   ctx.clearRect(0, 0, r.width, r.height);
-  drawTracked();
-  drawPendingTap(now);
-  if (tracked) updatePanel(now);
+
+  // الصندوق الثابت
+  drawFixedBox();
+
+  // علامة الكائن المتتبع
+  if (mode === 'locked' && tracked) drawTrackedMarker();
+
+  // اللوحة
+  if (mode === 'locked') updatePanel(now);
 }
 
+// ═══════════════════════════════════════════════
+//  الحلقة
+// ═══════════════════════════════════════════════
 function loop() {
   if (!running) return;
   const now = performance.now();
@@ -816,13 +988,16 @@ function loop() {
   if (video.readyState >= 2 && now - lastFrame > CFG.frameIntervalMs) {
     lastFrame = now;
     frameCount++;
-    if (tracked) trackStep(now);
+    if (mode === 'locked' && tracked) trackStep(now);
     render(now);
     if (recording) drawForRecording();
   }
   rafId = requestAnimationFrame(loop);
 }
 
+// ═══════════════════════════════════════════════
+//  التشغيل
+// ═══════════════════════════════════════════════
 async function start() {
   startBtn.disabled = true;
   startBtn.textContent = 'جارٍ التشغيل…';
@@ -848,19 +1023,21 @@ async function start() {
     await video.play();
     initGrayCanvas();
     resize();
+    initSensors();
     running = true;
     startBtn.style.display = 'none';
     bottomBar.style.display = 'flex';
     $('espBar').style.display = 'flex';
     logBox.style.display = 'flex';
-    hud.textContent = 'MokTrak Pro · جاهز';
+    selectBtn.style.display = 'flex';
+    hud.textContent = 'Trackvid · جاهز';
     hint.style.display = 'block';
-    setTimeout(() => { if (!tracked) hint.style.display = 'none'; }, 6000);
-    addLog('▶ تشغيل الكاميرا');
-    addLog('🔒 يعمل بدون إنترنت');
+    setTimeout(() => { if (mode === 'idle') hint.style.display = 'none'; }, 8000);
+    addLog('▶ تشغيل');
+    addLog('ضع الكائن في المربع ثم "تحديد"');
     loop();
   } catch (e) {
-    showError('تعذر التشغيل: ' + (e.message || e) + '\n\nتأكد من:\n• السماح بالكاميرا\n• فتح الرابط عبر HTTPS');
+    showError('تعذر التشغيل: ' + (e.message || e));
     hud.textContent = 'تعذر التشغيل';
     startBtn.disabled = false;
     startBtn.textContent = '↻ إعادة المحاولة';
@@ -872,7 +1049,7 @@ async function switchCamera() {
   if (stream) stream.getTracks().forEach(t => t.stop());
   running = false;
   cancelAnimationFrame(rafId);
-  unlock();
+  unlockObject();
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
@@ -896,7 +1073,6 @@ async function switchCamera() {
 }
 startBtn.addEventListener('click', start);
 switchBtn.addEventListener('click', e => { e.stopPropagation(); switchCamera(); });
-resetBtn.addEventListener('click', e => { e.stopPropagation(); unlock(); });
 
 function stopAll() {
   if (running) {
@@ -917,7 +1093,7 @@ function stopAll() {
   if (espSender.enabled && espSender.ip) {
     try {
       const img = new Image();
-      img.src = `http://${espSender.ip}/t?live=0&_=${Date.now()}`;
+      img.src = `http://${espSender.ip}/reset?_=${Date.now()}`;
     } catch(e) {}
   }
   if (startBtn) {
@@ -930,16 +1106,14 @@ function stopAll() {
   if (logBox) logBox.style.display = 'none';
   if (panel) panel.style.display = 'none';
   tracked = null;
+  mode = 'idle';
 }
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
-      if (document.hidden && running) {
-        addLog('⏸ الصفحة مخفية — إيقاف');
-        stopAll();
-      }
+      if (document.hidden && running) { addLog('⏸ إيقاف'); stopAll(); }
     }, CFG.hideGraceMs);
   } else {
     clearTimeout(hideTimer);
@@ -948,10 +1122,6 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('pagehide', () => stopAll());
 window.addEventListener('beforeunload', () => stopAll());
 window.addEventListener('unload', () => stopAll());
-
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
 })();
 </script>
 </body>
