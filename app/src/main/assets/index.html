@@ -16,25 +16,47 @@ html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:
 #hud{top:10px;right:10px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #fps{top:10px;left:10px}
 #hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:rgba(0,0,0,0.6);border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6;backdrop-filter:blur(8px)}
-#panel{position:absolute;z-index:5;right:8px;top:38%;transform:translateY(-50%);display:none;pointer-events:none;min-width:140px;max-width:158px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,60,60,0.55);border-radius:11px;padding:9px;color:#fff;font:12px ui-monospace,monospace;line-height:1.6;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
-#panel .title{font-weight:800;color:#ff5252;border-bottom:1px solid rgba(255,82,82,0.35);padding-bottom:5px;margin-bottom:6px;font-size:13px;text-align:center}
-#panel .row{display:flex;justify-content:space-between;gap:8px;margin:3px 0}
-#panel .k{color:rgba(0,255,136,0.7);font-size:11px}
+
+/* ═══ لوحة PID — شفافة جدًا ═══ */
+#panel{
+  position:absolute;
+  z-index:5;
+  right:8px;
+  top:38%;
+  transform:translateY(-50%);
+  display:none;
+  pointer-events:none;
+  min-width:128px;
+  max-width:150px;
+  background:rgba(0,0,0,0.10);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(255,60,60,0.25);
+  border-radius:11px;
+  padding:8px 9px;
+  color:#fff;
+  font:12px ui-monospace,monospace;
+  line-height:1.55;
+  text-shadow:0 0 6px rgba(0,0,0,1), 0 0 3px rgba(0,0,0,1), 1px 1px 2px rgba(0,0,0,1)
+}
+#panel .title{font-weight:800;color:#ff5252;border-bottom:1px solid rgba(255,82,82,0.2);padding-bottom:4px;margin-bottom:5px;font-size:12px;text-align:center}
+#panel .row{display:flex;justify-content:space-between;gap:6px;margin:2px 0}
+#panel .k{color:rgba(0,255,136,0.75);font-size:11px}
 #panel .v{color:#fff;font-weight:700;font-size:13px}
-#panel .sep{height:1px;background:rgba(255,82,82,0.25);margin:6px 0}
-#panel .sub{color:rgba(255,82,82,0.85);font-size:10px;text-align:center;margin:2px 0 4px;font-weight:700}
+#panel .sep{height:1px;background:rgba(255,82,82,0.15);margin:5px 0}
+
 button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #startBtn{position:absolute;z-index:8;bottom:28px;left:50%;transform:translateX(-50%);border-radius:28px;background:#00ff88;color:#00180d;padding:15px 26px;font-size:16px;box-shadow:0 5px 24px #00ff8844;white-space:nowrap}
 #startBtn:disabled{opacity:.7}
 #bottomBar{position:absolute;z-index:7;bottom:14px;left:0;right:0;display:none;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 10px}
-.ctrlBtn{min-width:56px;height:52px;padding:0 16px;border-radius:26px;background:rgba(0,26,16,0.75);border:1.5px solid #00ff8866;color:#00ff88;font-size:16px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);gap:6px}
+.ctrlBtn{min-width:56px;height:52px;padding:0 16px;border-radius:26px;background:rgba(0,26,16,0.55);border:1.5px solid #00ff8866;color:#00ff88;font-size:16px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);gap:6px}
 .ctrlBtn:active{transform:scale(.94)}
 .ctrlBtn.select{background:#00ff88;color:#00180d;font-weight:800}
 .ctrlBtn.rec{background:#ff1744;border-color:#ff1744;color:#fff}
 .ctrlBtn.rec.on{animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 #ff174488}50%{box-shadow:0 0 0 12px #ff174400}}
-#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,136,0.35);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(8px);flex-wrap:wrap;max-width:80%}
-#espBar input{background:rgba(0,26,16,0.8);border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
+#espBar{position:absolute;z-index:7;top:80px;right:10px;display:none;gap:6px;align-items:center;background:rgba(0,0,0,0.20);border:1px solid rgba(0,255,136,0.25);border-radius:14px;padding:6px 9px;font:600 10px monospace;backdrop-filter:blur(6px);flex-wrap:wrap;max-width:80%}
+#espBar input{background:rgba(0,26,16,0.6);border:1px solid #00ff8855;border-radius:8px;color:#00ff88;padding:4px 7px;font:600 10px monospace;width:96px;outline:none}
 #espBar input:focus{border-color:#00ff88}
 #espBtn{background:#00ff88;color:#00180d;border-radius:8px;padding:5px 10px;font:700 10px system-ui}
 #espBtn.off{background:#444;color:#aaa}
@@ -44,15 +66,15 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #espDot.mid{background:#ffca28}
 #statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid rgba(0,255,136,0.3);display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}
 #logBox{position:absolute;z-index:5;bottom:82px;left:10px;right:120px;max-height:110px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
-.logLine{background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,0.9);backdrop-filter:blur(6px);animation:fadeIn .3s}
+.logLine{background:rgba(0,0,0,0.20);border:1px solid rgba(0,255,136,0.20);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 4px rgba(0,0,0,1);backdrop-filter:blur(4px);animation:fadeIn .3s}
 .logLine.err{border-color:#ff5252;color:#ff7777}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 #err{display:none;position:absolute;z-index:20;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:440px;background:rgba(24,0,0,0.95);border:1px solid #ff5252;border-radius:12px;padding:16px;color:#ff7777;font-size:13px;line-height:1.6;white-space:pre-wrap}
 #recIndicator{position:absolute;z-index:9;top:10px;left:50%;transform:translateX(-50%);background:#ff1744;color:#fff;font:700 11px monospace;padding:6px 12px;border-radius:14px;display:none;align-items:center;gap:6px}
 #recIndicator::before{content:'';width:8px;height:8px;border-radius:4px;background:#fff;animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-#zoomBadge{position:absolute;z-index:6;bottom:16px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:700 12px monospace;padding:6px 10px;border-radius:12px;border:1px solid rgba(0,255,136,0.3);display:none;backdrop-filter:blur(6px)}
-#sensorBadge{position:absolute;z-index:6;bottom:56px;left:16px;background:rgba(0,0,0,0.4);color:#00ff88;font:600 10px monospace;padding:4px 8px;border-radius:10px;border:1px solid rgba(0,255,136,0.25);display:none;backdrop-filter:blur(6px)}
+#zoomBadge{position:absolute;z-index:6;bottom:16px;left:16px;background:rgba(0,0,0,0.3);color:#00ff88;font:700 12px monospace;padding:6px 10px;border-radius:12px;border:1px solid rgba(0,255,136,0.25);display:none;backdrop-filter:blur(6px);text-shadow:0 1px 3px #000}
+#sensorBadge{position:absolute;z-index:6;bottom:56px;left:16px;background:rgba(0,0,0,0.3);color:#00ff88;font:600 10px monospace;padding:4px 8px;border-radius:10px;border:1px solid rgba(0,255,136,0.2);display:none;backdrop-filter:blur(6px);text-shadow:0 1px 3px #000}
 </style>
 </head>
 <body>
@@ -95,66 +117,34 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 (function(){
 'use strict';
 
-// ═══════════════════════════════════════════════
-//  الإعدادات
-// ═══════════════════════════════════════════════
 const CFG = {
-  // القالب من داخل المربع
   patchSize: 22, initRegion: 30,
-
-  // البحث
   searchRadius: 22, coarseStep: 3, fineRadius: 3,
   searchRadiusLost: 70, coarseStepLost: 7,
-
-  // المقاييس
   scales: [0.35, 0.5, 0.65, 0.8, 0.92, 1.0, 1.1, 1.25, 1.45, 1.7, 2.0, 2.4],
   minScale: 0.3, maxScale: 3.0,
-
-  // SAD
   minSAD: 3200, bestSAD: 900,
-
-  // التنعيم
   posSmoothing: 0.55, sizeSmoothing: 0.85,
-
-  // الأداء
   grayMaxDim: 480, frameIntervalMs: 25,
   templateUpdateEvery: 8,
   lostFramesToWarn: 20,
-
-  // صندوق ثابت
   boxScreenRatio: 0.42,
-
-  // الزوم
   zoomMin: 1.0, zoomMax: 8.0,
-
-  // التسجيل
   recMaxDim: 720,
-
-  // المستشعرات
   sensorWeight: 0.35, gyroScale: 6.0,
-
-  // ═══ PID ═══
   panKp: 0.06, panKi: 0.008, panKd: 0.015,
   tiltKp: 0.06, tiltKi: 0.008, tiltKd: 0.015,
   pidIntegralLimit: 200,
   maxStep: 3.0,
   deadzone: 15,
-
-  // حدود السيرفو
   panMin: 10, panMax: 170, panCenter: 90,
   tiltMin: 10, tiltMax: 170, tiltCenter: 90,
   panInvert: false, tiltInvert: false,
-
-  // ESP
   espInterval: 33,
-
   logMaxLines: 5,
   hideGraceMs: 800
 };
 
-// ═══════════════════════════════════════════════
-//  DOM
-// ═══════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const video = $('video'), canvas = $('overlay'), ctx = canvas.getContext('2d', {alpha: true});
 const videoWrap = $('videoWrap'), wrap = $('wrap');
@@ -188,13 +178,10 @@ function addLog(text, isError) {
   while (logBox.children.length > CFG.logMaxLines) logBox.removeChild(logBox.firstChild);
 }
 
-// ═══════════════════════════════════════════════
-//  الحالة
-// ═══════════════════════════════════════════════
 let stream = null, running = false, facing = 'environment';
 let lastFrame = 0, fpsN = 0, fpsT = performance.now(), fps = 0;
 let rafId = 0, frameCount = 0;
-let mode = 'idle';        // 'idle' أو 'locked'
+let mode = 'idle';
 let tracked = null;
 let zoom = 1.0;
 let recording = false, recorder = null, recChunks = [], recStartTime = 0, recTimer = 0;
@@ -208,9 +195,6 @@ const scratchRegion = new Uint8Array(CFG.patchSize * CFG.patchSize);
 const recCanvas = document.createElement('canvas');
 const recCtx = recCanvas.getContext('2d');
 
-// ═══════════════════════════════════════════════
-//  PID Controller
-// ═══════════════════════════════════════════════
 class PID {
   constructor(kp, ki, kd, integralLimit, outputLimit) {
     this.kp = kp; this.ki = ki; this.kd = kd;
@@ -244,29 +228,22 @@ const servoCtrl = {
   tiltPID: new PID(CFG.tiltKp, CFG.tiltKi, CFG.tiltKd, CFG.pidIntegralLimit, CFG.maxStep),
   lastT: 0,
   lastDPan: 0, lastDTilt: 0,
-
   update(errX, errY, now) {
     let dt = (now - this.lastT) / 1000;
     if (this.lastT === 0 || dt <= 0 || dt > 0.5) dt = 0.033;
     this.lastT = now;
-
     let ex = Math.abs(errX) < CFG.deadzone ? 0 : errX;
     let ey = Math.abs(errY) < CFG.deadzone ? 0 : errY;
-
     const dPanRaw  = this.panPID.update(ex, dt);
     const dTiltRaw = this.tiltPID.update(ey, dt);
-
     const dPan  = CFG.panInvert  ? -dPanRaw  : dPanRaw;
     const dTilt = CFG.tiltInvert ? -dTiltRaw : dTiltRaw;
-
     this.pan  -= dPan;
     this.tilt += dTilt;
-
     if (this.pan  < CFG.panMin)  this.pan  = CFG.panMin;
     if (this.pan  > CFG.panMax)  this.pan  = CFG.panMax;
     if (this.tilt < CFG.tiltMin) this.tilt = CFG.tiltMin;
     if (this.tilt > CFG.tiltMax) this.tilt = CFG.tiltMax;
-
     this.lastDPan = dPan;
     this.lastDTilt = dTilt;
   },
@@ -281,11 +258,7 @@ const servoCtrl = {
   }
 };
 
-// ═══════════════════════════════════════════════
-//  المستشعرات
-// ═══════════════════════════════════════════════
 const sensors = { supported: false, rotAlpha: 0, rotBeta: 0, rotGamma: 0, lastUpdate: 0 };
-
 function initSensors() {
   if (window.DeviceMotionEvent) {
     window.addEventListener('devicemotion', (e) => {
@@ -301,19 +274,15 @@ function initSensors() {
   }
   sensorBadge.style.display = 'block';
   setTimeout(() => {
-    sensorBadge.textContent = sensors.supported ? '📡 المستشعرات نشطة' : '📡 المستشعرات معطلة';
+    sensorBadge.textContent = sensors.supported ? '📡 نشطة' : '📡 معطلة';
     if (sensors.supported) addLog('📡 المستشعرات متاحة');
   }, 2000);
 }
 
-// ═══════════════════════════════════════════════
-//  ESP8266 Sender
-// ═══════════════════════════════════════════════
 const espSender = {
   ip: localStorage.getItem('trackvid_esp_ip') || '',
   enabled: false, lastSend: 0, ok: false, fails: 0, timer: null,
   sentCount: 0, lastPan: -1, lastTilt: -1,
-
   setIP(v) {
     this.ip = (v || '').trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
     if (this.ip) localStorage.setItem('trackvid_esp_ip', this.ip);
@@ -338,13 +307,11 @@ const espSender = {
     const now = performance.now();
     if (now - this.lastSend < CFG.espInterval) return;
     this.lastSend = now;
-
     const pan = servoCtrl.pan.toFixed(1);
     const tilt = servoCtrl.tilt.toFixed(1);
     if (pan === this.lastPan && tilt === this.lastTilt) return;
     this.lastPan = pan;
     this.lastTilt = tilt;
-
     this._fire(`http://${this.ip}/servo?pan=${pan}&tilt=${tilt}`);
     this.sentCount++;
     if (this.sentCount <= 3 || this.sentCount % 30 === 0) {
@@ -401,9 +368,6 @@ $('espIP').addEventListener('keypress', e => { if (e.key === 'Enter') $('espBtn'
 if (espSender.ip) $('espIP').value = espSender.ip;
 updateEspUI();
 
-// ═══════════════════════════════════════════════
-//  الأدوات
-// ═══════════════════════════════════════════════
 function resize() {
   const r = wrap.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.max(1, Math.round(r.width * dpr));
@@ -426,13 +390,7 @@ function videoToLocal(vx, vy) {
   const f = fit();
   return [f.ox + vx * f.scale, f.oy + vy * f.scale];
 }
-function videoToGray(x, y) {
-  return [x * grayW / (video.videoWidth || 640), y * grayH / (video.videoHeight || 480)];
-}
 
-// ═══════════════════════════════════════════════
-//  الصورة الرمادية
-// ═══════════════════════════════════════════════
 function initGrayCanvas() {
   const vw = video.videoWidth || 640, vh = video.videoHeight || 480;
   if (vw >= vh) { grayW = CFG.grayMaxDim; grayH = Math.round(CFG.grayMaxDim * vh / vw); }
@@ -477,9 +435,6 @@ function sad(a, b) {
   return s;
 }
 
-// ═══════════════════════════════════════════════
-//  الصندوق الثابت
-// ═══════════════════════════════════════════════
 function getBoxScreenRect() {
   const W = canvas.width / (window.devicePixelRatio || 1);
   const H = canvas.height / (window.devicePixelRatio || 1);
@@ -489,9 +444,6 @@ function getBoxScreenRect() {
   return { x: cx - size/2, y: cy - size/2, w: size, h: size, cx, cy };
 }
 
-// ═══════════════════════════════════════════════
-//  تحديد الهدف
-// ═══════════════════════════════════════════════
 function lockObject() {
   const gray = grabGray();
   if (!gray) { addLog('⚠ الكاميرا غير جاهزة', true); return; }
@@ -529,9 +481,6 @@ function unlockObject() {
   espSender.stop();
 }
 
-// ═══════════════════════════════════════════════
-//  خطوة التتبع
-// ═══════════════════════════════════════════════
 function trackStep(now) {
   if (!tracked) return;
   const gray = grabGray();
@@ -618,9 +567,6 @@ function trackStep(now) {
   }
 }
 
-// ═══════════════════════════════════════════════
-//  اللمس (pinch فقط)
-// ═══════════════════════════════════════════════
 const pointers = new Map();
 let pinchStartDist = 0, pinchStartZoom = 1, isPinching = false;
 function getTwoPointerDistance() {
@@ -675,9 +621,6 @@ zoomOutBtn.addEventListener('click', e => { e.stopPropagation(); setZoom(zoom / 
 selectBtn.addEventListener('click', e => { e.stopPropagation(); lockObject(); });
 resetBtn.addEventListener('click', e => { e.stopPropagation(); unlockObject(); });
 
-// ═══════════════════════════════════════════════
-//  التسجيل
-// ═══════════════════════════════════════════════
 function pickMime() {
   const types = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
   for (const t of types) if (MediaRecorder.isTypeSupported(t)) return t;
@@ -764,7 +707,6 @@ function drawForRecording() {
   const srcW = VW / Z, srcH = VH / Z;
   const srcX = (VW - srcW) / 2, srcY = (VH - srcH) / 2;
   recCtx.drawImage(video, srcX, srcY, srcW, srcH, 0, 0, CW, CH);
-
   const boxSize = Math.min(CW, CH) * CFG.boxScreenRatio;
   const bx = CW/2 - boxSize/2, by = CH/2 - boxSize/2;
   recCtx.strokeStyle = mode === 'locked' ? '#ff3c3c' : '#00ff88';
@@ -781,7 +723,6 @@ function drawForRecording() {
   recCtx.moveTo(ccx, ccy-cs); recCtx.lineTo(ccx, ccy-cs*0.3);
   recCtx.moveTo(ccx, ccy+cs*0.3); recCtx.lineTo(ccx, ccy+cs);
   recCtx.stroke();
-
   if (mode === 'locked' && tracked) {
     const vScaleX = VW / grayW, vScaleY = VH / grayH;
     const ovx = tracked.cx * vScaleX, ovy = tracked.cy * vScaleY;
@@ -794,21 +735,16 @@ function drawForRecording() {
   }
 }
 
-// ═══════════════════════════════════════════════
-//  الرسم
-// ═══════════════════════════════════════════════
 function drawFixedBox() {
   const rect = getBoxScreenRect();
   const isLocked = mode === 'locked';
   const color = isLocked ? '#ff3c3c' : '#00ff88';
-
   ctx.save();
   ctx.strokeStyle = color;
   ctx.shadowColor = color;
   ctx.shadowBlur = isLocked ? 14 : 10;
   ctx.lineWidth = 3;
   ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
-
   const cl = Math.min(rect.w, rect.h) * 0.18;
   ctx.lineWidth = 5;
   ctx.beginPath();
@@ -817,7 +753,6 @@ function drawFixedBox() {
   ctx.moveTo(rect.x+rect.w, rect.y+rect.h-cl); ctx.lineTo(rect.x+rect.w, rect.y+rect.h); ctx.lineTo(rect.x+rect.w-cl, rect.y+rect.h);
   ctx.moveTo(rect.x+cl, rect.y+rect.h); ctx.lineTo(rect.x, rect.y+rect.h); ctx.lineTo(rect.x, rect.y+rect.h-cl);
   ctx.stroke();
-
   ctx.lineWidth = 2.5;
   const cs = Math.min(rect.w, rect.h) * 0.18;
   const cx = rect.cx, cy = rect.cy;
@@ -827,17 +762,14 @@ function drawFixedBox() {
   ctx.moveTo(cx, cy-cs); ctx.lineTo(cx, cy-cs*0.28);
   ctx.moveTo(cx, cy+cs*0.28); ctx.lineTo(cx, cy+cs);
   ctx.stroke();
-
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.arc(cx, cy, cs*0.32, 0, Math.PI*2);
   ctx.stroke();
-
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(cx, cy, 2.2, 0, Math.PI*2);
   ctx.fill();
-
   ctx.lineWidth = 3;
   const r2 = cs + 5, arcLen = Math.PI/4;
   for (let k = 0; k < 4; k++) {
@@ -856,7 +788,6 @@ function drawTrackedMarker() {
   const vx = tracked.cx * vScaleX;
   const vy = tracked.cy * vScaleY;
   const [sx, sy] = videoToLocal(vx, vy);
-
   const live = tracked.live;
   ctx.save();
   ctx.strokeStyle = live ? '#ffeb3b' : 'rgba(255,235,59,0.5)';
@@ -872,18 +803,13 @@ function drawTrackedMarker() {
   ctx.restore();
 }
 
-// ═══════════════════════════════════════════════
-//  لوحة PID المبسّطة
-// ═══════════════════════════════════════════════
 function updatePanel(now) {
   if (!tracked) return;
-
   const vScaleX = (video.videoWidth || 640) / grayW;
   const vScaleY = (video.videoHeight || 480) / grayH;
   const offX = (tracked.cx - grayW/2) * vScaleX;
   const offY = (tracked.cy - grayH/2) * vScaleY;
 
-  // احسب PID (يُرسل بعد قليل)
   servoCtrl.update(offX, offY, now);
 
   const dPanSend  = -servoCtrl.lastDPan;
@@ -926,9 +852,6 @@ function render(now) {
   if (mode === 'locked') updatePanel(now);
 }
 
-// ═══════════════════════════════════════════════
-//  الحلقة
-// ═══════════════════════════════════════════════
 function loop() {
   if (!running) return;
   const now = performance.now();
@@ -948,9 +871,6 @@ function loop() {
   rafId = requestAnimationFrame(loop);
 }
 
-// ═══════════════════════════════════════════════
-//  التشغيل
-// ═══════════════════════════════════════════════
 async function start() {
   startBtn.disabled = true;
   startBtn.textContent = 'جارٍ التشغيل…';
