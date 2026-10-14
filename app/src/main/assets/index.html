@@ -16,16 +16,13 @@ html,body,#wrap{width:100%;height:100%;height:100dvh;overflow:hidden;background:
 #hud{top:10px;right:10px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #fps{top:10px;left:10px}
 #hint{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);display:none;background:rgba(0,0,0,0.6);border:1px solid #00ff88;color:#00ff88;padding:12px 20px;border-radius:20px;text-align:center;font-size:13px;max-width:85%;line-height:1.6;backdrop-filter:blur(8px)}
-#panel{position:absolute;z-index:5;right:8px;top:38%;transform:translateY(-50%);display:none;pointer-events:none;min-width:172px;max-width:200px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,0.35);border-radius:11px;padding:8px;color:#fff;font:11px ui-monospace,monospace;line-height:1.5;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
-#panel.locked{border-color:rgba(255,60,60,0.55)}
-#panel .title{font-weight:800;color:#00ff88;border-bottom:1px solid rgba(0,255,136,0.3);padding-bottom:4px;margin-bottom:4px;font-size:12px}
-#panel.locked .title{color:#ff5252;border-color:rgba(255,82,82,0.35)}
-#panel .sub{font-weight:700;color:#ffca28;font-size:10px;margin-top:6px;margin-bottom:2px;letter-spacing:.5px}
-.row{display:flex;justify-content:space-between;gap:8px}
-.k{color:rgba(0,255,136,0.7)}.v{color:#fff;font-weight:700}
-.good{color:#00ff88}.warn{color:#ffca28}.bad{color:#ff5252}
-.delta-pos{color:#ff5252 !important}
-.delta-neg{color:#00e5ff !important}
+#panel{position:absolute;z-index:5;right:8px;top:38%;transform:translateY(-50%);display:none;pointer-events:none;min-width:140px;max-width:158px;background:rgba(0,0,0,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,60,60,0.55);border-radius:11px;padding:9px;color:#fff;font:12px ui-monospace,monospace;line-height:1.6;text-shadow:0 1px 4px rgba(0,0,0,0.9)}
+#panel .title{font-weight:800;color:#ff5252;border-bottom:1px solid rgba(255,82,82,0.35);padding-bottom:5px;margin-bottom:6px;font-size:13px;text-align:center}
+#panel .row{display:flex;justify-content:space-between;gap:8px;margin:3px 0}
+#panel .k{color:rgba(0,255,136,0.7);font-size:11px}
+#panel .v{color:#fff;font-weight:700;font-size:13px}
+#panel .sep{height:1px;background:rgba(255,82,82,0.25);margin:6px 0}
+#panel .sub{color:rgba(255,82,82,0.85);font-size:10px;text-align:center;margin:2px 0 4px;font-weight:700}
 button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #startBtn{position:absolute;z-index:8;bottom:28px;left:50%;transform:translateX(-50%);border-radius:28px;background:#00ff88;color:#00180d;padding:15px 26px;font-size:16px;box-shadow:0 5px 24px #00ff8844;white-space:nowrap}
 #startBtn:disabled{opacity:.7}
@@ -46,7 +43,7 @@ button{font-family:system-ui,sans-serif;font-weight:700;cursor:pointer;border:0}
 #espDot.off{background:#ff5252}
 #espDot.mid{background:#ffca28}
 #statusBar{position:absolute;z-index:6;top:42px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:#00ff88;font:600 10px monospace;padding:5px 12px;border-radius:10px;border:1px solid rgba(0,255,136,0.3);display:none;max-width:90%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px)}
-#logBox{position:absolute;z-index:5;bottom:82px;left:10px;right:120px;max-height:130px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
+#logBox{position:absolute;z-index:5;bottom:82px;left:10px;right:120px;max-height:110px;display:none;flex-direction:column-reverse;gap:2px;overflow:hidden;pointer-events:none}
 .logLine{background:rgba(0,0,0,0.32);border:1px solid rgba(0,255,136,0.25);border-radius:6px;padding:3px 8px;color:#00ff88;font:600 10px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,0.9);backdrop-filter:blur(6px);animation:fadeIn .3s}
 .logLine.err{border-color:#ff5252;color:#ff7777}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -125,7 +122,7 @@ const CFG = {
   lostFramesToWarn: 20,
 
   // صندوق ثابت
-  boxScreenRatio: 0.42,   // نسبة الصندوق من أصغر بُعد للشاشة
+  boxScreenRatio: 0.42,
 
   // الزوم
   zoomMin: 1.0, zoomMax: 8.0,
@@ -136,7 +133,7 @@ const CFG = {
   // المستشعرات
   sensorWeight: 0.35, gyroScale: 6.0,
 
-  // ═══ PID للسيرفو ═══
+  // ═══ PID ═══
   panKp: 0.06, panKi: 0.008, panKd: 0.015,
   tiltKp: 0.06, tiltKi: 0.008, tiltKd: 0.015,
   pidIntegralLimit: 200,
@@ -198,7 +195,7 @@ let stream = null, running = false, facing = 'environment';
 let lastFrame = 0, fpsN = 0, fpsT = performance.now(), fps = 0;
 let rafId = 0, frameCount = 0;
 let mode = 'idle';        // 'idle' أو 'locked'
-let tracked = null;       // كائن التتبع
+let tracked = null;
 let zoom = 1.0;
 let recording = false, recorder = null, recChunks = [], recStartTime = 0, recTimer = 0;
 let hideTimer = null;
@@ -432,9 +429,6 @@ function videoToLocal(vx, vy) {
 function videoToGray(x, y) {
   return [x * grayW / (video.videoWidth || 640), y * grayH / (video.videoHeight || 480)];
 }
-function grayToVideo(x, y) {
-  return [x * (video.videoWidth || 640) / grayW, y * (video.videoHeight || 480) / grayH];
-}
 
 // ═══════════════════════════════════════════════
 //  الصورة الرمادية
@@ -487,7 +481,6 @@ function sad(a, b) {
 //  الصندوق الثابت
 // ═══════════════════════════════════════════════
 function getBoxScreenRect() {
-  // إحداثيات على الكانفس (قبل الزوم) — نُصغّر الحجم بنسبة zoom ليبقى ثابتًا على الشاشة
   const W = canvas.width / (window.devicePixelRatio || 1);
   const H = canvas.height / (window.devicePixelRatio || 1);
   const size = Math.min(W, H) * CFG.boxScreenRatio / zoom;
@@ -502,7 +495,6 @@ function getBoxScreenRect() {
 function lockObject() {
   const gray = grabGray();
   if (!gray) { addLog('⚠ الكاميرا غير جاهزة', true); return; }
-  // القالب من مركز الصورة الرمادية (لأن الصندوق في وسط الشاشة = وسط الفيديو)
   const gcx = grayW / 2;
   const gcy = grayH / 2;
   const temp = new Uint8Array(CFG.patchSize * CFG.patchSize);
@@ -520,7 +512,6 @@ function lockObject() {
   mode = 'locked';
   servoCtrl.reset();
   panel.style.display = 'block';
-  panel.classList.add('locked');
   logBox.style.display = 'flex';
   hud.textContent = '🔴 الهدف مقفل';
   selectBtn.style.display = 'none';
@@ -531,10 +522,8 @@ function unlockObject() {
   tracked = null;
   mode = 'idle';
   panel.style.display = 'none';
-  panel.classList.remove('locked');
   hud.textContent = 'Trackvid · جاهز';
   selectBtn.style.display = 'flex';
-  selectBtn.textContent = '🔴 تحديد';
   servoCtrl.reset();
   addLog('✕ إلغاء التحديد');
   espSender.stop();
@@ -630,7 +619,7 @@ function trackStep(now) {
 }
 
 // ═══════════════════════════════════════════════
-//  اللمس (pinch فقط الآن — لا نقرة مزدوجة)
+//  اللمس (pinch فقط)
 // ═══════════════════════════════════════════════
 const pointers = new Map();
 let pinchStartDist = 0, pinchStartZoom = 1, isPinching = false;
@@ -776,7 +765,6 @@ function drawForRecording() {
   const srcX = (VW - srcW) / 2, srcY = (VH - srcH) / 2;
   recCtx.drawImage(video, srcX, srcY, srcW, srcH, 0, 0, CW, CH);
 
-  // الصندوق الثابت في مركز التسجيل
   const boxSize = Math.min(CW, CH) * CFG.boxScreenRatio;
   const bx = CW/2 - boxSize/2, by = CH/2 - boxSize/2;
   recCtx.strokeStyle = mode === 'locked' ? '#ff3c3c' : '#00ff88';
@@ -785,7 +773,6 @@ function drawForRecording() {
   recCtx.shadowBlur = 8;
   recCtx.strokeRect(bx, by, boxSize, boxSize);
   recCtx.shadowBlur = 0;
-  // صليب
   const ccx = CW/2, ccy = CH/2;
   const cs = boxSize * 0.14;
   recCtx.beginPath();
@@ -795,7 +782,6 @@ function drawForRecording() {
   recCtx.moveTo(ccx, ccy+cs*0.3); recCtx.lineTo(ccx, ccy+cs);
   recCtx.stroke();
 
-  // علامة الكائن المتتبع
   if (mode === 'locked' && tracked) {
     const vScaleX = VW / grayW, vScaleY = VH / grayH;
     const ovx = tracked.cx * vScaleX, ovy = tracked.cy * vScaleY;
@@ -823,7 +809,6 @@ function drawFixedBox() {
   ctx.lineWidth = 3;
   ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
 
-  // زوايا مُقوّاة
   const cl = Math.min(rect.w, rect.h) * 0.18;
   ctx.lineWidth = 5;
   ctx.beginPath();
@@ -833,7 +818,6 @@ function drawFixedBox() {
   ctx.moveTo(rect.x+cl, rect.y+rect.h); ctx.lineTo(rect.x, rect.y+rect.h); ctx.lineTo(rect.x, rect.y+rect.h-cl);
   ctx.stroke();
 
-  // الصليب
   ctx.lineWidth = 2.5;
   const cs = Math.min(rect.w, rect.h) * 0.18;
   const cx = rect.cx, cy = rect.cy;
@@ -844,19 +828,16 @@ function drawFixedBox() {
   ctx.moveTo(cx, cy+cs*0.28); ctx.lineTo(cx, cy+cs);
   ctx.stroke();
 
-  // دائرة داخلية صغيرة
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.arc(cx, cy, cs*0.32, 0, Math.PI*2);
   ctx.stroke();
 
-  // نقطة
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(cx, cy, 2.2, 0, Math.PI*2);
   ctx.fill();
 
-  // 4 أقواس زاوية
   ctx.lineWidth = 3;
   const r2 = cs + 5, arcLen = Math.PI/4;
   for (let k = 0; k < 4; k++) {
@@ -865,7 +846,6 @@ function drawFixedBox() {
     ctx.arc(cx, cy, r2, ang, ang+arcLen);
     ctx.stroke();
   }
-
   ctx.restore();
 }
 
@@ -876,9 +856,6 @@ function drawTrackedMarker() {
   const vx = tracked.cx * vScaleX;
   const vy = tracked.cy * vScaleY;
   const [sx, sy] = videoToLocal(vx, vy);
-  // ملاحظة: هذه الإحداثيات محلية داخل الكانفس، لكن الكانفس مُكبَّر بـ CSS zoom
-  // لذلك الموقع الصحيح على الشاشة = sx, sy مباشرة (لأن الكانفس نفسه مُكبَّر)
-  // لكن نحن نرسم داخل الكانفس قبل الزوم، لذا القيم صحيحة كما هي
 
   const live = tracked.live;
   ctx.save();
@@ -887,89 +864,65 @@ function drawTrackedMarker() {
   ctx.shadowColor = '#ffeb3b';
   ctx.shadowBlur = live ? 8 : 3;
   ctx.lineWidth = 2;
-
-  // مربع صغير حول الكائن
-  const boxS = Math.max(20, CFG.patchSize * tracked.scale * vScaleX * ((video.videoWidth||640)/grayW) / vScaleX * 0.5);
-  // ملاحظة: نبسط — نرسم مربع بحجم ثابت
   const s = 22 / zoom;
   ctx.strokeRect(sx - s/2, sy - s/2, s, s);
-
-  // نقطة
   ctx.beginPath();
   ctx.arc(sx, sy, 2.5, 0, Math.PI*2);
   ctx.fill();
-
   ctx.restore();
 }
 
+// ═══════════════════════════════════════════════
+//  لوحة PID المبسّطة
+// ═══════════════════════════════════════════════
 function updatePanel(now) {
   if (!tracked) return;
+
   const vScaleX = (video.videoWidth || 640) / grayW;
   const vScaleY = (video.videoHeight || 480) / grayH;
-  const boxCxGray = grayW / 2;
-  const boxCyGray = grayH / 2;
-  // الإزاحة عن مركز الصندوق (بكسل الفيديو)
-  const offX = (tracked.cx - boxCxGray) * vScaleX;
-  const offY = (tracked.cy - boxCyGray) * vScaleY;
-  const age = now - tracked.lastSeen;
-  let status = 'نشط', cls = 'good';
-  if (!tracked.live) { status = 'بحث'; cls = 'warn'; }
-  else if (age > 300) { status = 'استعادة'; cls = 'warn'; }
+  const offX = (tracked.cx - grayW/2) * vScaleX;
+  const offY = (tracked.cy - grayH/2) * vScaleY;
 
-  const pT = servoCtrl.panPID.terms;
-  const tT = servoCtrl.tiltPID.terms;
+  // احسب PID (يُرسل بعد قليل)
+  servoCtrl.update(offX, offY, now);
 
-  // التغير المُرسل للسيرفو
-  const dPanSend  = -servoCtrl.lastDPan * (CFG.panInvert  ? -1 : 1);
-  const dTiltSend =  servoCtrl.lastDTilt * (CFG.tiltInvert ? -1 : 1);
+  const dPanSend  = -servoCtrl.lastDPan;
+  const dTiltSend =  servoCtrl.lastDTilt;
 
-  const panCls  = dPanSend  > 0.05 ? 'delta-pos' : (dPanSend  < -0.05 ? 'delta-neg' : '');
-  const tiltCls = dTiltSend > 0.05 ? 'delta-pos' : (dTiltSend < -0.05 ? 'delta-neg' : '');
+  const panSign  = dPanSend  > 0.005 ? '+' : '';
+  const tiltSign = dTiltSend > 0.005 ? '+' : '';
+
+  const panColor  = Math.abs(dPanSend)  < 0.005 ? '#888' :
+                    dPanSend  > 0 ? '#ff5252' : '#00e5ff';
+  const tiltColor = Math.abs(dTiltSend) < 0.005 ? '#888' :
+                    dTiltSend > 0 ? '#ff5252' : '#00e5ff';
 
   panel.innerHTML =
-    '<div class="title">🔴 هدف مقفل</div>' +
-    '<div class="row"><span class="k">الحالة</span><span class="'+cls+'">'+status+'</span></div>' +
-    '<div class="row"><span class="k">إزاحة x</span><span class="v">'+offX.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">إزاحة y</span><span class="v">'+offY.toFixed(0)+'</span></div>' +
-    '<div class="row"><span class="k">SAD</span><span class="v">'+tracked.sad.toFixed(0)+'</span></div>' +
-
-    '<div class="sub">🎛 التغير المطلوب</div>' +
-    '<div class="row"><span class="k">ΔPan</span><span class="v '+panCls+'">'+
-      (dPanSend>=0?'+':'')+dPanSend.toFixed(2)+'°</span></div>' +
-    '<div class="row"><span class="k">ΔTilt</span><span class="v '+tiltCls+'">'+
-      (dTiltSend>=0?'+':'')+dTiltSend.toFixed(2)+'°</span></div>' +
-
-    '<div class="sub">📐 الزوايا الحالية</div>' +
-    '<div class="row"><span class="k">Pan</span><span class="v">'+servoCtrl.pan.toFixed(1)+'°</span></div>' +
-    '<div class="row"><span class="k">Tilt</span><span class="v">'+servoCtrl.tilt.toFixed(1)+'°</span></div>' +
-
-    '<div class="sub">🧮 PID</div>' +
-    '<div class="row"><span class="k">P</span><span class="v">'+
-      pT.p.toFixed(2)+' / '+tT.p.toFixed(2)+'</span></div>' +
-    '<div class="row"><span class="k">I</span><span class="v">'+
-      pT.i.toFixed(2)+' / '+tT.i.toFixed(2)+'</span></div>' +
-    '<div class="row"><span class="k">D</span><span class="v">'+
-      pT.d.toFixed(2)+' / '+tT.d.toFixed(2)+'</span></div>' +
-
-    '<div class="row" style="margin-top:4px"><span class="k">ESP</span><span class="v">'+
+    '<div class="title">🎯 PID السيرفو</div>' +
+    '<div class="row"><span class="k">Pan Δ</span>' +
+      '<span class="v" style="color:'+panColor+'">'+
+      panSign + dPanSend.toFixed(2) + '°</span></div>' +
+    '<div class="row"><span class="k">Tilt Δ</span>' +
+      '<span class="v" style="color:'+tiltColor+'">'+
+      tiltSign + dTiltSend.toFixed(2) + '°</span></div>' +
+    '<div class="sep"></div>' +
+    '<div class="row"><span class="k">Pan°</span>' +
+      '<span class="v">'+servoCtrl.pan.toFixed(0)+'°</span></div>' +
+    '<div class="row"><span class="k">Tilt°</span>' +
+      '<span class="v">'+servoCtrl.tilt.toFixed(0)+'°</span></div>' +
+    '<div class="sep"></div>' +
+    '<div class="row"><span class="k">ESP</span>' +
+      '<span class="v" style="color:'+(espSender.ok?'#00ff88':'#ff5252')+'">'+
       (espSender.ok?'✅':'⏸')+'</span></div>';
 
-  // حساب PID بناءً على الإزاحة
-  servoCtrl.update(offX, offY, now);
   espSender.send();
 }
 
 function render(now) {
   const r = wrap.getBoundingClientRect();
   ctx.clearRect(0, 0, r.width, r.height);
-
-  // الصندوق الثابت
   drawFixedBox();
-
-  // علامة الكائن المتتبع
   if (mode === 'locked' && tracked) drawTrackedMarker();
-
-  // اللوحة
   if (mode === 'locked') updatePanel(now);
 }
 
